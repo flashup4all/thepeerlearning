@@ -1,0 +1,197 @@
+Enum vehicle_types {
+  tricycle
+  motorcycle
+  truck
+  bus
+  car
+ }
+
+ Enum user_types {
+  business
+  user
+ }
+
+Table keys {
+    id int [primary key]
+    private_key string
+    public_key string
+    business_id int [ref: > businesses.id]
+}
+
+
+Account Context
+    Table users {
+    id int [primary key]
+    email varchar
+    password varchar
+    user_type user_types
+    role string 
+    phone_number varchar
+    is_active boolean
+    is_bvn_verified boolean
+    status string
+    metadata jsonb
+    deleted_at date
+    }
+
+    Table user_profile {
+        id int [primary key]
+        first_name varchar
+        last_name varchar
+        age int
+        gender varchar
+        user_id int [ref: > users.id]
+        state string
+        address string
+        province_lga string
+        nationality string
+        deleted_at date
+    }
+
+
+Table businesses {
+  id int [primary key]
+  business_name varchar
+  business_address varchar
+  country user_types
+  registration_number string
+  is_verified boolean
+  status string
+  metadata jsonb
+  deleted_at date
+  user_id int [ref: > users.id]
+}
+
+PeerLearning Context
+    Table branches {
+    id int [primary key]
+    business_name varchar
+    business_address varchar
+    country user_types
+    registration_number string
+    is_verified boolean
+    status string
+    metadata jsonb
+    deleted_at date
+    created_by int [ref: > users.id]
+    }
+
+    Table branches_users {
+    id int [primary key]
+    email varchar
+    password varchar
+    user_type user_types
+    role string 
+    phone_number varchar
+    is_active boolean
+    is_bvn_verified boolean
+    status string
+    metadata jsonb
+    deleted_at date
+    branch_id int [ref: > apporte_branches.id]
+    }
+
+    Table vehicles {
+    id int [primary key]
+    name varchar
+    plate_number varchar
+    chassis_number varchar
+    type vehicle_types
+    description varchar
+    status string
+    metadata jsonb
+    deleted_at date
+    branch_id int [ref: > apporte_branches.id]
+    }
+
+    Table rider_vehicles {
+    id int [primary key]
+    is_active boolean
+    status string
+    rider_id int [ref: > users.id]
+    vehicle_id int [ref: > vehicles.id]
+    deleted_at date
+    deleted_by string [ref: > users.id]
+    assigned_by string [ref: > users.id]
+    }
+
+Table orders {
+  id uuid [primary key]
+  invoice_number string
+  total decimal
+  sub_total decimal
+  total_insurance_fee decimal
+  total_vat decimal
+  total_delivery_fee decimal
+  channel string
+  deleted_at date
+  assigned_by string [ref: > users.id]
+}
+
+Table order_items {
+  id uuid [primary key]
+  item_name string
+  item_image_url string
+  quantity int
+  serial_number string
+  item_amount string
+  item_amount_paid_by string
+  delivery_type string
+  insurance_fee string
+  item_description string
+  metadata jsonb
+  order_id string [ref: > orders.id]
+  deleted_at date
+  delivery_fee decimal
+  pickup_location string
+  delivery_location string
+}
+
+stripe payment test case
+payment_intent=pi_3NUGXEIzACUV2cT02l1sLjke&payment_intent_client_secret=pi_3NUGXEIzACUV2cT02l1sLjke_secret_Q9Tb14UXCbEYTVmUvhWh4tTwd&redirect_status=succeeded
+
+
+User add onboarding state to user model
+
+[account_created, class_schedule, completed]
+
+user onboarding
+{
+  "parent": {
+    "fullname": "John Doe"
+  },
+
+  "child": {
+    "fullname": "Hakeem John"
+  },
+  "user": {
+    "email": "johndoe@gmail.com",
+    "phone_number": "+2348032413264"
+    "country": "United States",
+    "password": "12345678"
+  },
+}
+
+classes - draft -- 
+{
+    "class_schedule": {
+      "timezone": "timezone",
+      "course_id": "string",
+      "start_date": "date",
+      "other_options": "long string"
+      "schedule": [
+        {
+          "day": "Monday",
+          "time": "9:00"
+        }
+      ]
+    }
+  }
+
+
+payments 
+{
+  "payment_intent": "pi_3NUGXEIzACUV2cT02l1sLjke",
+  "payment_intent_client_secret": "pi_3NUGXEIzACUV2cT02l1sLjke_secret_Q9Tb14UXCbEYTVmUvhWh4tTwd",
+  "redirect_status": "succeeded"
+}
