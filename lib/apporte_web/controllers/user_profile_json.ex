@@ -1,4 +1,6 @@
 defmodule PeerLearningWeb.UserProfileJSON do
+  @moduledoc false
+
   alias PeerLearning.Accounts.UserProfile
 
   @doc """

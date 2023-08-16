@@ -10,6 +10,5 @@ defmodule PeerLearning.Repo.Migrations.CreateClassScheduleDrafts do
     end
 
     create index(:schedule_drafts, [:user_id])
-
   end
 end

@@ -65,7 +65,8 @@ defmodule PeerLearning.Accounts.Children do
   end
 
   def get_child(child_id) do
-    query = __MODULE__ |>  where([child], child.id == ^child_id)
+    query = __MODULE__ |> where([child], child.id == ^child_id)
+
     case Repo.one(query) do
       nil ->
         {:error, :not_found}

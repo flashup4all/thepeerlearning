@@ -14,6 +14,10 @@ defmodule PeerLearningWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :no_auth do
+    plug :accepts, ["json"]
+  end
+
   pipeline :auth do
     plug PeerLearningWeb.Plug.AuthAccessPipeline
   end
@@ -36,6 +40,8 @@ defmodule PeerLearningWeb.Router do
         post "/verify-user", UserController, :verify_user
       end
 
+      get "/courses", CourseController, :index
+
       post "/login", AuthController, :login
       post "/send_mail", AuthController, :send_mail
 
@@ -49,8 +55,17 @@ defmodule PeerLearningWeb.Router do
           resources "/class-schedule-drafts", ClassScheduleDraftController
         end
 
+        scope "/courses" do
+          resources "/", CourseController
+          resources "/:course_id/outlines", CourseOutlineController
+        end
+
         # admin routes
         get "/children", ChildrenController, :index
+      end
+
+      scope "/" do
+        resources "/class-schedule-drafts", ClassScheduleDraftController
       end
     end
   end

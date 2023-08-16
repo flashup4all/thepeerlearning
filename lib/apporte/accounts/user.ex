@@ -20,7 +20,10 @@ defmodule PeerLearning.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :binary
     field :phone_number, :string
-    field :registration_step, Ecto.Enum, values: [:account_created, :class_schedule, :completed], default: :account_created
+
+    field :registration_step, Ecto.Enum,
+      values: [:account_created, :class_schedule, :completed],
+      default: :account_created
 
     field :role, Ecto.Enum, values: [:rider, :admin, :super_admin, :user, :branch_admin]
     field :user_type, Ecto.Enum, values: [:user, :business]

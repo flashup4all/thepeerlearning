@@ -5,7 +5,6 @@ defmodule PeerLearningWeb.Validators.CreateSchedule do
   use PeerLearning.Schema
   import Ecto.Changeset
 
-
   @primary_key false
   embedded_schema do
     field :day, :string

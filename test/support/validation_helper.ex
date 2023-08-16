@@ -1,4 +1,6 @@
 defmodule PeerLearning.ValidationHelper do
+  @moduledoc false
+
   use ExUnit.CaseTemplate
 
   def errors_on(struct, data) do

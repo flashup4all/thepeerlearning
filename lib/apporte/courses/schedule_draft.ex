@@ -1,4 +1,4 @@
-defmodule PeerLearning.ClassSchedules.ClassScheduleDraft do
+defmodule PeerLearning.Courses.ClassScheduleDraft do
   @moduledoc false
 
   alias PeerLearning.Repo
@@ -51,6 +51,7 @@ defmodule PeerLearning.ClassSchedules.ClassScheduleDraft do
 
   def get_user_draft(user_id) do
     query = __MODULE__ |> where([children], children.user_id == ^user_id)
+
     case Repo.one(query) do
       nil ->
         {:error, :not_found}
@@ -61,7 +62,8 @@ defmodule PeerLearning.ClassSchedules.ClassScheduleDraft do
   end
 
   def get_draft(draft_id) do
-    query = __MODULE__ |>  where([draft], draft.id == ^draft_id)
+    query = __MODULE__ |> where([draft], draft.id == ^draft_id)
+
     case Repo.one(query) do
       nil ->
         {:error, :not_found}

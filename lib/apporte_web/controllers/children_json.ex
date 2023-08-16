@@ -2,7 +2,7 @@ defmodule PeerLearningWeb.ChildrenJSON do
   alias PeerLearning.Accounts.{User, Children}
 
   @doc """
-  Renders a list of users.
+  Renders a list of children.
   """
   def index(%{children: children}) do
     %{
@@ -15,7 +15,7 @@ defmodule PeerLearningWeb.ChildrenJSON do
   end
 
   @doc """
-  Renders a single user.
+  Renders a single children.
   """
   def show(%{children: children}) do
     %{data: data(children)}

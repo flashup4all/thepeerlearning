@@ -7,7 +7,6 @@ defmodule PeerLearningWeb.Validators.UserClassSchedule do
 
   alias PeerLearningWeb.Validators.CreateSchedule
 
-
   @primary_key false
   embedded_schema do
     field :timezone, :string

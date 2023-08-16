@@ -1,5 +1,5 @@
 # defmodule PeerLearningWeb.ClassScheduleDraftJSON do
-#   alias PeerLearning.ClassSchedules.ClassScheduleDraft
+#   alias PeerLearning.Courses.ClassScheduleDraft
 
 #   @doc """
 #   Renders a list of users.

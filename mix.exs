@@ -50,6 +50,8 @@ defmodule PeerLearning.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:money, "~> 1.12"},
+      {:stripity_stripe, "~> 2.0"},
       # auth
       {:argon2_elixir, "~> 3.0"},
       {:comeonin, "~> 5.0"},

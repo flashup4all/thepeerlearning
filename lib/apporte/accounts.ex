@@ -17,21 +17,20 @@ defmodule PeerLearning.Accounts do
     Children.get_user_children(Map.from_struct(params))
   end
 
-
   def create_child(%User{} = user, %AddChild{} = params) do
     Children.create_child(user, Map.from_struct(params))
   end
 
   def update_child(child_id, %UpdateChild{} = params) do
     with {:ok, %Children{} = child} <- Children.get_child(child_id),
-    {:ok, %Children{} = child} <- Children.update(child, Map.from_struct(params)) do
+         {:ok, %Children{} = child} <- Children.update(child, Map.from_struct(params)) do
       {:ok, child}
     end
   end
 
   def delete_child(child_id) do
     with {:ok, %Children{} = child} <- Children.get_child(child_id),
-    {:ok, %Children{} = child} <- Children.delete(child) do
+         {:ok, %Children{} = child} <- Children.delete(child) do
       {:ok, child}
     end
   end

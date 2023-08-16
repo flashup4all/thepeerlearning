@@ -93,6 +93,7 @@ default_pagination =
     """
 
 config :peer_learning,
+  http_client: PeerLearning.HTTPClient,
   default_pagination: default_pagination,
   email_provider: default_email_provider,
   web_endpoint: "http://localhost:3000"
@@ -138,10 +139,19 @@ config :peer_learning, Oban,
   repo: PeerLearning.Repo,
   queues: [default: 10]
 
-# config :swoosh, :api_client, Swoosh.ApiClient.Hackney
-# config :peer_learning,
-#   mailgun_domain: mailgun_domain,
-#   mailgun_key: mailgun_api_key
+config :money,
+  default_currency: :USD
+
+stripe_secret =
+  System.get_env("STRIPE_SECRET") ||
+    raise """
+    environment variable STRIPE_SECRET is missing.
+    """
+config :peer_learning, PeerLearning.Integrations.Stripe,
+  api_secret_key: stripe_secret,
+  base_url: "https://api.stripe.com/v1"
+
+config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
