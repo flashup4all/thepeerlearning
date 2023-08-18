@@ -5,7 +5,7 @@ defmodule PeerLearningWeb.Validators.UserClassSchedule do
   use PeerLearning.Schema
   import Ecto.Changeset
 
-  alias PeerLearningWeb.Validators.CreateSchedule
+  alias PeerLearningWeb.Validators.CreateWeeklySchedule
 
   @primary_key false
   embedded_schema do
@@ -13,7 +13,7 @@ defmodule PeerLearningWeb.Validators.UserClassSchedule do
     field :course_id, Ecto.UUID
     field :start_date, :string
     field :other_options, :string
-    embeds_many(:schedules, CreateSchedule)
+    embeds_many(:weeks, CreateWeeklySchedule)
   end
 
   @required_fields [:timezone, :start_date, :other_options, :course_id]
@@ -23,7 +23,7 @@ defmodule PeerLearningWeb.Validators.UserClassSchedule do
     %__MODULE__{}
     |> cast(attrs, @cast_fields)
     |> validate_required(@required_fields)
-    |> cast_embed(:schedules, required: true)
+    |> cast_embed(:weeks, required: true)
     |> apply_changes_if_valid()
   end
 end

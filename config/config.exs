@@ -147,6 +147,7 @@ stripe_secret =
     raise """
     environment variable STRIPE_SECRET is missing.
     """
+
 config :peer_learning, PeerLearning.Integrations.Stripe,
   api_secret_key: stripe_secret,
   base_url: "https://api.stripe.com/v1"

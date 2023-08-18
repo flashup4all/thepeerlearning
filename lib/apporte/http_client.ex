@@ -35,10 +35,15 @@ defmodule PeerLearning.HTTPClient do
     end
   end
 
-  defp maybe_post_or_put(request_type, url, body, headers, options) when request_type in [:post, :put] do
-    IO.inspect Jason.encode(body)
+  defp maybe_post_or_put(request_type, url, body, headers, options)
+       when request_type in [:post, :put] do
+    IO.inspect(options)
+
     with {:ok, encoded_body} <- Jason.encode(body),
-         %Finch.Request{} = request = Finch.build(request_type, URI.encode(url), headers, encoded_body, options) |> IO.inspect,
+         %Finch.Request{} =
+           request =
+           Finch.build(request_type, URI.encode(url), headers, encoded_body, options)
+           |> IO.inspect(),
          {:ok, %Finch.Response{status: status, body: response_body}} when status in 200..299 <-
            Finch.request(request, PeerLearning.Finch),
          {:ok, decoded_response} <- decode_or_return_raw(response_body) do
@@ -47,6 +52,7 @@ defmodule PeerLearning.HTTPClient do
       # hack to handle paystack specific response style.
       {:ok, %Finch.Response{status: status, body: reason} = response} when status in [400] ->
         IO.inspect(response)
+
         case Jason.decode(reason) do
           {:ok, %{"status" => false, "message" => message}} ->
             {:error, message}

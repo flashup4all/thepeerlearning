@@ -18,10 +18,12 @@ defmodule PeerLearning.Courses do
     Pagination
   }
 
-  def create_schedule_draft(%User{} = user, %UserClassSchedule{} = params) do
-    params = %{params | schedules: Enum.map(params.schedules, &Map.from_struct(&1))}
-
-    with {:ok, encoded_draft} <- Jason.encode(Map.from_struct(params)),
+  def create_schedule_draft(%User{} = user, %UserClassSchedule{weeks: weeks} = params) do
+    weeks = Enum.map(weeks, fn week -> %{week | schedules:  Enum.map(week.schedules, &Map.from_struct(&1))} end)
+    # params = %{params | weeks: Map.from_struct(weeks)} |> IO.inspect
+    params = %{params | weeks: Enum.map(weeks, &Map.from_struct(&1))}
+    # schedules: Enum.map(params.schedules, &Map.from_struct(&1))
+    with {:ok, encoded_draft} <- Jason.encode(Map.from_struct(params))|> IO.inspect,
          {:error, _} <- ClassScheduleDraft.get_user_draft(user.id),
          {:ok, %ClassScheduleDraft{} = draft} <-
            ClassScheduleDraft.create(user, %{content: encoded_draft}) do
@@ -32,9 +34,11 @@ defmodule PeerLearning.Courses do
         ClassScheduleDraft.update(draft, %{content: encoded_draft})
 
       {:error, error} ->
+        IO.inspect error
         {:error, :custom, :bad_request, "Error", "error"}
 
       error ->
+        IO.inspect error
         {:error, :custom, :bad_request, "Error", error}
     end
   end
@@ -158,7 +162,7 @@ defmodule PeerLearning.Courses do
       amount: 6000,
       currency: "USD",
       automatic_payment_methods: %{
-        enabled: true,
+        enabled: true
       },
       customer: %{},
       metadata: %{
