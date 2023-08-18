@@ -9,8 +9,6 @@ defmodule PeerLearning.Integrations.Stripe do
   require Logger
 
   def create_payment_intent(%PaymentIntent{} = payload) do
-    IO.inspect(Map.from_struct(payload))
-
     case @http_client.post(
            @base_url <> "/payment_intents",
            Map.from_struct(payload),
@@ -18,7 +16,6 @@ defmodule PeerLearning.Integrations.Stripe do
            []
          ) do
       {:ok, response} ->
-        IO.inspect(response)
         {:ok, response}
 
       {:error, error} ->

@@ -28,7 +28,7 @@ defmodule PeerLearning.Auth do
            Children.create_child(user, Map.from_struct(child)),
            {:ok, user_token} <- UserToken.create_user_token(user, "email_verification"),
            {:ok, token, _claims} <-
-            Guardian.encode_and_sign(user, token_type: "auth") do
+             Guardian.encode_and_sign(user, token_type: "auth") do
         [first_name | last_name] = split_fullname(user_profile.fullname)
 
         PeerLearningEvents.email_service_deliver_email_confirmation(%{

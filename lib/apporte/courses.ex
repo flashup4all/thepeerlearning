@@ -8,8 +8,6 @@ defmodule PeerLearning.Courses do
 
   alias PeerLearning.Accounts.{User, UserProfile, Children}
   alias PeerLearning.Courses.{ClassScheduleDraft, Course, CourseOutline}
-  alias PeerLearning.Integrations.Stripe
-  alias PeerLearning.Integrations.Stripe.PaymentIntent
 
   alias PeerLearningWeb.Validators.{
     UserClassSchedule,
@@ -19,11 +17,14 @@ defmodule PeerLearning.Courses do
   }
 
   def create_schedule_draft(%User{} = user, %UserClassSchedule{weeks: weeks} = params) do
-    weeks = Enum.map(weeks, fn week -> %{week | schedules:  Enum.map(week.schedules, &Map.from_struct(&1))} end)
-    # params = %{params | weeks: Map.from_struct(weeks)} |> IO.inspect
+    weeks =
+      Enum.map(weeks, fn week ->
+        %{week | schedules: Enum.map(week.schedules, &Map.from_struct(&1))}
+      end)
+
     params = %{params | weeks: Enum.map(weeks, &Map.from_struct(&1))}
-    # schedules: Enum.map(params.schedules, &Map.from_struct(&1))
-    with {:ok, encoded_draft} <- Jason.encode(Map.from_struct(params))|> IO.inspect,
+
+    with {:ok, encoded_draft} <- Jason.encode(Map.from_struct(params)),
          {:error, _} <- ClassScheduleDraft.get_user_draft(user.id),
          {:ok, %ClassScheduleDraft{} = draft} <-
            ClassScheduleDraft.create(user, %{content: encoded_draft}) do
@@ -34,11 +35,9 @@ defmodule PeerLearning.Courses do
         ClassScheduleDraft.update(draft, %{content: encoded_draft})
 
       {:error, error} ->
-        IO.inspect error
         {:error, :custom, :bad_request, "Error", "error"}
 
       error ->
-        IO.inspect error
         {:error, :custom, :bad_request, "Error", error}
     end
   end
@@ -127,15 +126,10 @@ defmodule PeerLearning.Courses do
   end
 
   def get_course_outline(course_outline_id) do
-    with {:ok, %CourseOutline{} = course_outline} <-
-           CourseOutline.get_course_outline(course_outline_id) do
-      {:ok, course_outline}
-    else
-      {:error, error} ->
-        {:error, error}
-
-      error ->
-        {:error, error}
+    case CourseOutline.get_course_outline(course_outline_id) do
+      {:ok, %CourseOutline{} = course_outline} -> {:ok, course_outline}
+      {:error, error} -> {:error, error}
+      error -> {:error, error}
     end
   end
 
@@ -155,33 +149,5 @@ defmodule PeerLearning.Courses do
       error ->
         {:error, error}
     end
-  end
-
-  def create_payment_intent() do
-    Stripe.create_payment_intent(%PaymentIntent{
-      amount: 6000,
-      currency: "USD",
-      automatic_payment_methods: %{
-        enabled: true
-      },
-      customer: %{},
-      metadata: %{
-        email: "email@mail.com",
-        id: 2
-      }
-    })
-
-    # Stripe.PaymentIntent.create(%{
-    #   amount: 6000,
-    #   currency: "USD",
-    #   automatic_payment_methods: %{
-    #       enabled: true,
-    #     },
-    #     customer: %{},
-    #     metadata: %{
-    #       email: "email@mail.com",
-    #       id: 2
-    #     }
-    # })
   end
 end

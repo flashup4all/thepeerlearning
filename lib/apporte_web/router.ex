@@ -58,7 +58,12 @@ defmodule PeerLearningWeb.Router do
         scope "/courses" do
           resources "/", CourseController
           resources "/:course_id/outlines", CourseOutlineController
+          post "/:course_id/billings/initiate", InitiateTransactionController, :create
         end
+
+        # scope "/billings" do
+        #   resources "initiate", InitiateTransactionController
+        # end
 
         # admin routes
         get "/children", ChildrenController, :index

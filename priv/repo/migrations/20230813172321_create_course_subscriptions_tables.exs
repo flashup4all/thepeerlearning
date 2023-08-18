@@ -10,7 +10,7 @@ defmodule PeerLearning.Repo.Migrations.CreateCourseSubscriptionsTables do
       add :end_date, :utc_datetime_usec
       add :user_id, references(:users)
       add :course_id, references(:courses)
-      add :transaction_id, references(:transactions)
+      # add :transaction_id, references(:transactions)
 
       timestamps()
     end
