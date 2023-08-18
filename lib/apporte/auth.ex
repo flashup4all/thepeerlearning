@@ -26,7 +26,9 @@ defmodule PeerLearning.Auth do
            {:ok, %UserProfile{} = user_profile} <-
              UserProfile.create_user_profile(user, Map.from_struct(parent)),
            Children.create_child(user, Map.from_struct(child)),
-           {:ok, user_token} <- UserToken.create_user_token(user, "email_verification") do
+           {:ok, user_token} <- UserToken.create_user_token(user, "email_verification"),
+           {:ok, token, _claims} <-
+            Guardian.encode_and_sign(user, token_type: "auth") do
         [first_name | last_name] = split_fullname(user_profile.fullname)
 
         PeerLearningEvents.email_service_deliver_email_confirmation(%{
@@ -39,7 +41,7 @@ defmodule PeerLearning.Auth do
           }
         })
 
-        Repo.preload(user, [:user_profile])
+        %{user: Repo.preload(user, [:user_profile]), token: token}
       else
         {:error, error} ->
           Repo.rollback(error)

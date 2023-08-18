@@ -16,11 +16,16 @@ defmodule PeerLearningWeb.UserController do
 
   def register(conn, params) do
     with {:ok, validated_params} <- RegisterUser.cast_and_validate(params),
-         {:ok, %User{} = user} <- Auth.create_user(validated_params) do
+         {:ok, %{user: user, token: token}} <- Auth.create_user(validated_params)|> IO.inspect do
       conn
       |> put_status(:created)
       # |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      # |> render(:show, user: user)
+      |> put_view(PeerLearningWeb.AuthJSON)
+      |> render("auth.json", %{
+        token: token,
+        user: user
+      })
     end
   end
 
