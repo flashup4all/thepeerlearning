@@ -7,7 +7,9 @@ defmodule PeerLearningWeb.Validators.CreateDaySchedule do
 
   @primary_key false
   embedded_schema do
-    field :day, :string
+    field :day, Ecto.Enum,
+      values: [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+
     field :time, :string
   end
 

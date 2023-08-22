@@ -1,4 +1,4 @@
-defmodule PeerLearningWeb.Validators.CourseOutlineValidator do
+defmodule PeerLearningWeb.Validators.UserCourseOutlinePagination do
   @moduledoc """
     ResetPassword Validator
   """
@@ -7,32 +7,28 @@ defmodule PeerLearningWeb.Validators.CourseOutlineValidator do
 
   @primary_key false
   embedded_schema do
-    field :title, :string
-    field :description, :string
-    field :content, :string
+    field :page, :integer
+    field :limit, :integer
     field :is_active, :boolean
-    field :order, :integer
+    field :from_date, :date
+    field :to_date, :date
+
+    field :course_subscription_id, Ecto.UUID
+    field :user_id, Ecto.UUID
+    field :children_id, Ecto.UUID
   end
 
   @required_fields [
-    :title,
-    :description,
-    :order
+    :page,
+    :limit
   ]
-  @cast_fields [:content, :is_active] ++
+  @cast_fields [:user_id, :children_id, :is_active, :from_date, :to_date, :course_subscription_id] ++
                  @required_fields
   @doc false
   def cast_and_validate(attrs) do
     %__MODULE__{}
     |> cast(attrs, @cast_fields)
     |> validate_required(@required_fields)
-    |> apply_changes_if_valid()
-  end
-
-  def update_cast_and_validate(attrs) do
-    %__MODULE__{}
-    |> cast(attrs, @required_fields)
-    |> validate_required([])
     |> apply_changes_if_valid()
   end
 end

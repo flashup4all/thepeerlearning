@@ -5,6 +5,7 @@ defmodule PeerLearning.Repo.Migrations.CreateInitiateTransactionsTables do
     create table(:initiate_transactions) do
       add :amount, :integer
       add :provider, :string
+      add :currency, :string
       add :gateway_ref, :string
       add :metadata, :map
       add :status, :string

@@ -1,25 +1,34 @@
-defmodule PeerLearning.Billing.InitiateTransaction do
+defmodule PeerLearning.Billing.Transaction do
   @moduledoc false
 
   alias PeerLearning.Repo
   use PeerLearning.Schema
   import Ecto.Query
   alias PeerLearning.Accounts.User
+  alias PeerLearning.Billing.InitiateTransaction
   import Ecto.Changeset
 
   @type t :: %__MODULE__{}
 
-  schema "initiate_transactions" do
+  schema "transactions" do
     field :gateway_ref, :string
+    field :type, Ecto.Enum, values: [:credit, :debit]
     field :provider, Ecto.Enum, values: [:stripe, :paystack], default: :stripe
-    field :status, Ecto.Enum, values: [:initiated, :completed], default: :initiated
-    field :resource_id, :string
-    field :resource_type, Ecto.Enum, values: [:course, :instructor], default: :course
-    field :currency, :string, default: "USD"
+    field :status, Ecto.Enum, values: [:success, :pending, :processing], default: :processing
+
+    field :purpose, Ecto.Enum,
+      values: [:course_subscription, :instructor_remitance],
+      default: :course_subscription
+
     field :amount, Money.Ecto.Amount.Type
+    field :currency, :string, default: "USD"
+
+    field :fee, Money.Ecto.Amount.Type
+    field :gateway_fee, Money.Ecto.Amount.Type
     field :metadata, :map
-    field :deleted_at, :utc_datetime
+    field :gateway_context, :map
     belongs_to(:user, User)
+    belongs_to(:initiate_transaction, InitiateTransaction)
 
     timestamps()
   end
@@ -27,34 +36,32 @@ defmodule PeerLearning.Billing.InitiateTransaction do
   def fields, do: __MODULE__.__schema__(:fields)
 
   @required_fields [
-    :gateway_ref,
-    :provider,
-    :resource_id,
-    :resource_type,
-    :amount
+    :purpose,
+    :amount,
+    :type
   ]
-  @cast_fields [:metadata, :deleted_at, :status] ++
+  @cast_fields [:metadata, :gateway_ref, :status, :provider, :fee, :gateway_fee] ++
                  @required_fields
 
   @doc false
-  def changeset(%User{} = user, params) do
+  def changeset(%User{} = user, %InitiateTransaction{} = initiate_transaction, params) do
     %__MODULE__{}
     |> cast(params, @cast_fields)
     # |> update_change(:amount, &Money.multiply(Money.new(&1.amount), 100))
     |> validate_required(@required_fields)
     |> put_assoc(:user, user)
+    |> put_assoc(:initiate_transaction, initiate_transaction)
   end
 
-  def create(%User{} = user, params) do
-    changeset(user, params)
+  def create(%User{} = user, %InitiateTransaction{} = initiate_transaction, params) do
+    changeset(user, initiate_transaction, params)
     |> Repo.insert()
   end
 
-  def get_initiate_transaction(initiate_transaction_id) do
+  def get_transaction(transaction_id) do
     query =
       __MODULE__
-      |> where([transaction], transaction.id == ^initiate_transaction_id)
-      |> where([transaction], is_nil(transaction.deleted_at))
+      |> where([transaction], transaction.id == ^transaction_id)
 
     case Repo.one(query) do
       nil ->
@@ -65,11 +72,10 @@ defmodule PeerLearning.Billing.InitiateTransaction do
     end
   end
 
-  def get_by_gateway_ref(ref) do
+  def get_transaction_with_gateway_ref(ref) do
     query =
       __MODULE__
       |> where([transaction], transaction.gateway_ref == ^ref)
-      |> where([transaction], is_nil(transaction.deleted_at))
 
     case Repo.one(query) do
       nil ->
@@ -78,12 +84,5 @@ defmodule PeerLearning.Billing.InitiateTransaction do
       initiate_transaction ->
         {:ok, initiate_transaction}
     end
-  end
-
-  def update(%__MODULE__{} = initiate_tranaction, params) do
-    initiate_tranaction
-    |> cast(params, @cast_fields)
-    |> validate_required(@required_fields)
-    |> Repo.update()
   end
 end

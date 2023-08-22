@@ -28,7 +28,9 @@ defmodule PeerLearning.Accounts.User do
     field :role, Ecto.Enum, values: [:rider, :admin, :super_admin, :user, :branch_admin]
     field :user_type, Ecto.Enum, values: [:user, :business]
 
+    has_many(:children, PeerLearning.Accounts.Children)
     has_one(:user_profile, PeerLearning.Accounts.UserProfile)
+
     timestamps()
   end
 
@@ -42,7 +44,8 @@ defmodule PeerLearning.Accounts.User do
                  :metadata,
                  :deleted_at,
                  :is_email_verified,
-                 :is_phone_number_verified
+                 :is_phone_number_verified,
+                 :registration_step
                ] ++ @required_fields
 
   defp changeset(params) do

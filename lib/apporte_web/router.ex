@@ -50,20 +50,38 @@ defmodule PeerLearningWeb.Router do
         pipe_through :auth
 
         scope "/users" do
-          put "/users/:id", UserProfileController, :update
+          put "/:id", UserProfileController, :update
           resources "/children", ChildrenController
           resources "/class-schedule-drafts", ClassScheduleDraftController
+          get "/courses-subscriptions", CourseSubscriptionController, :index
+
+          get "/courses-subscriptions/:course_subscription_id",
+              CourseSubscriptionController,
+              :show
+
+          get "/courses-subscriptions/:course_subscription_id/course-outlines",
+              UserCourseOutlineController,
+              :index
+
+          get "/courses-subscriptions/:course_subscription_id/course-outlines/:user_course_outline_id",
+              UserCourseOutlineController,
+              :show
         end
 
         scope "/courses" do
           resources "/", CourseController
           resources "/:course_id/outlines", CourseOutlineController
-          post "/:course_id/billings/initiate", InitiateTransactionController, :create
+          post "/:course_id/billings/initiate-payment", InitiateTransactionController, :create
+
+          # get "/courses-subscriptions/:course_subscription_id/course-outlines", UserCourseOutlineController, :index
+          # get "/courses-subscriptions/:course_subscription_id/course-outlines/:course_outline_id", UserCourseOutlineController, :show
         end
 
-        # scope "/billings" do
-        #   resources "initiate", InitiateTransactionController
-        # end
+        scope "/billings" do
+          get "/payment-intents/:payment_intent_id/verify-payment",
+              InitiateTransactionController,
+              :verify_payment_intent
+        end
 
         # admin routes
         get "/children", ChildrenController, :index

@@ -24,7 +24,9 @@ defmodule PeerLearningWeb.CourseOutlineJSON do
   def data(%CourseOutline{} = course_outline) do
     %{
       id: course_outline.id,
+      course_id: course_outline.course_id,
       content: course_outline.content,
+      order: course_outline.order,
       description: course_outline.description,
       title: course_outline.title,
       deleted_at: course_outline.deleted_at,

@@ -14,6 +14,12 @@ defmodule PeerLearningWeb.ChildrenJSON do
     }
   end
 
+  def index_from_assoc(%{children: children}) do
+    %{
+      data: for(child <- children, do: data(child))
+    }
+  end
+
   @doc """
   Renders a single children.
   """

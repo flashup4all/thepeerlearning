@@ -41,7 +41,7 @@ defmodule PeerLearning.Auth do
           }
         })
 
-        %{user: Repo.preload(user, [:user_profile]), token: token}
+        %{user: Repo.preload(user, [:children, :user_profile]), token: token}
       else
         {:error, error} ->
           Repo.rollback(error)
@@ -80,7 +80,7 @@ defmodule PeerLearning.Auth do
          {:ok, user_profile} <- UserProfile.get_user_profile_by_user_id(user.id),
          {:ok, token, _claims} <-
            Guardian.encode_and_sign(user, token_type: "auth") do
-      {:ok, %{user: %{user | user_profile: user_profile}, token: token}}
+      {:ok, %{user: Repo.preload(user, [:children, :user_profile]), token: token}}
     else
       {false, :verify_pass} ->
         # Logger.warn("App.Auth - failed to verify email/password")

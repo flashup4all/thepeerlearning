@@ -6,9 +6,9 @@ defmodule PeerLearning.Billings do
   import Ecto.Query, warn: false
   alias PeerLearning.Repo
 
-  alias PeerLearning.Accounts.{User}
+  alias PeerLearning.Accounts.{User, Children}
   alias PeerLearning.Courses.{Course}
-  alias PeerLearning.Billing.{InitiateTransaction}
+  alias PeerLearning.Billing.{InitiateTransaction, Transaction}
 
   def money_to_string(amount) do
     Money.to_string(amount, separator: "", delimiter: "", symbol: false)
@@ -44,6 +44,49 @@ defmodule PeerLearning.Billings do
                resource_id: course.id,
                resource_type: :course
              }) do
+        initiate_transaction
+      else
+        {:error, error} ->
+          {:error, error}
+          Repo.rollback(error)
+
+        error ->
+          {:error, error}
+          Repo.rollback(error)
+      end
+    end)
+  end
+
+  def verify_payment_intent(%User{} = user, payment_intent_id) do
+    Repo.transaction(fn ->
+      with {:ok, %InitiateTransaction{} = initiate_transaction} <-
+             InitiateTransaction.get_by_gateway_ref(payment_intent_id),
+           :initiated <- initiate_transaction.status,
+           {:ok, %Stripe.PaymentIntent{} = payment_intent} <-
+             Stripe.PaymentIntent.retrieve(payment_intent_id, %{}),
+           "succeeded" <- payment_intent.status,
+           {:ok, %Transaction{} = transaction} <-
+             Transaction.create(user, initiate_transaction, %{
+               amount: payment_intent.amount,
+               purpose: :course_subscription,
+               type: :credit,
+               gateway_context: payment_intent,
+               status: :success
+             }),
+           {:ok, %InitiateTransaction{} = initiate_transaction} <-
+             InitiateTransaction.update(initiate_transaction, %{status: :completed}),
+           {:ok, %User{} = user} <-
+             User.update_user(user, %{registration_step: :completed}) do
+        #  send transaction email notification job
+        #  create course subscription via job
+        PeerLearningEvents.course_service_to_create_user_courses(%{
+          "type" => "create_user_courses",
+          "payload" => %{
+            "user_id" => user.id,
+            "transaction_id" => transaction.id
+          }
+        })
+
         initiate_transaction
       else
         {:error, error} ->

@@ -12,6 +12,7 @@ defmodule PeerLearning.Courses.CourseOutline do
 
   schema "course_outlines" do
     field :title, :string
+    field :order, :integer
     field :description, :string
     field :content, :string
     field :is_active, :boolean, default: true
@@ -26,7 +27,8 @@ defmodule PeerLearning.Courses.CourseOutline do
 
   @required_fields [
     :title,
-    :description
+    :description,
+    :order
   ]
   @cast_fields [:is_active, :content, :deleted_at, :course_id] ++
                  @required_fields
@@ -44,12 +46,23 @@ defmodule PeerLearning.Courses.CourseOutline do
     |> Repo.insert()
   end
 
-  def list(params) do
+  def list(course_id, params) do
     query =
       __MODULE__
-      |> where([course_outline], course_outline.is_active == true)
+      # |> where([course_outline], course_outline.is_active == true)
+      |> where([course_outline], course_outline.course_id == ^course_id)
       |> where([course_outline], is_nil(course_outline.deleted_at))
+      |> order_by([course_outline], asc: course_outline.order)
       |> Repo.paginate(page: params.page, page_size: params.limit)
+  end
+
+  def course_outlines(course_id) do
+    query =
+      __MODULE__
+      |> where([course_outline], course_outline.course_id == ^course_id)
+      |> where([course_outline], is_nil(course_outline.deleted_at))
+      |> order_by([course_outline], asc: course_outline.order)
+      |> Repo.all()
   end
 
   def get_course_outline(course_id) do

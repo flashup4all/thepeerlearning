@@ -12,4 +12,12 @@ defmodule PeerLearningEvents do
   defdelegate email_service_deliver_updated_password_mail(payload),
     to: PeerLearningEvents.EmailServiceJob,
     as: :deliver_updated_password_mail
+
+  defdelegate email_service_deliver_subscription_reciept_mail(payload),
+    to: PeerLearningEvents.EmailServiceJob,
+    as: :deliver_subscription_reciept_mail
+
+  defdelegate course_service_to_create_user_courses(payload),
+    to: PeerLearningEvents.CourseServiceJob,
+    as: :create_user_courses
 end

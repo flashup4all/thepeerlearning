@@ -4,7 +4,9 @@ defmodule PeerLearning.Repo.Migrations.CreateClassScheduleDrafts do
   def change do
     create table(:schedule_drafts) do
       add :content, :text
+      add :status, :string
       add :user_id, references(:users)
+      add :children_id, references(:children)
 
       timestamps()
     end

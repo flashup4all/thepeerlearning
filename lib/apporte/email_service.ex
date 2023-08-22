@@ -93,4 +93,24 @@ defmodule PeerLearning.EmailService do
 
     :ok
   end
+
+  def deliver_subscription_reciept_mail(payload) do
+    web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
+
+    to_email = payload["email"]
+    first_name = payload["first_name"]
+    _last_name = payload["last_name"]
+
+    base_email()
+    |> to(to_email)
+    |> subject("[The Peer Learning] Password Updated")
+    |> template("updated-password")
+    |> substitute_variables(%{
+      "first_name" => first_name,
+      "password_reset_link" => "#{web_endpoint}/login"
+    })
+    |> Mailer.deliver_now()
+
+    :ok
+  end
 end

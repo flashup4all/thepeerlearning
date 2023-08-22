@@ -7,13 +7,15 @@ defmodule PeerLearning.Courses.ClassScheduleDraft do
 
   import Ecto.Changeset
 
-  alias PeerLearning.Accounts.User
+  alias PeerLearning.Accounts.{User, Children}
 
   @type t :: %__MODULE__{}
 
   schema "schedule_drafts" do
     field :content, :string
-    belongs_to(:user, PeerLearning.Accounts.User)
+    field :status, Ecto.Enum, values: [:completed, :pending, :ongoing], default: :pending
+    belongs_to(:user, User)
+    belongs_to(:children, Children)
 
     timestamps()
   end
@@ -21,9 +23,10 @@ defmodule PeerLearning.Courses.ClassScheduleDraft do
   def fields, do: __MODULE__.__schema__(:fields)
 
   @required_fields [:content]
-  @cast_fields [:user_id] ++
+  @cast_fields [:user_id, :status] ++
                  @required_fields
   @spec changeset(
+          {map, map},
           {map, map}
           | %{
               :__struct__ => atom | %{:__changeset__ => map, optional(any) => any},
@@ -32,21 +35,40 @@ defmodule PeerLearning.Courses.ClassScheduleDraft do
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) :: Ecto.Changeset.t()
   @doc false
-  def changeset(%User{} = user, params) do
+  def changeset(%User{} = user, %Children{} = children, params) do
     %__MODULE__{}
     |> cast(params, @cast_fields)
     |> validate_required(@required_fields)
     |> put_assoc(:user, user)
+    |> put_assoc(:children, children)
   end
 
-  def create(%User{} = user, params) do
-    changeset(user, params)
+  def create(%User{} = user, %Children{} = children, params) do
+    changeset(user, children, params)
     |> Repo.insert()
   end
 
   def delete(%__MODULE__{} = schedule_draft) do
     schedule_draft
     |> Repo.delete()
+  end
+
+  def get_user_pending_draft(user_id, children_id) do
+    query =
+      __MODULE__
+      |> where(
+        [draft],
+        draft.user_id == ^user_id and draft.children_id == ^children_id and
+          draft.status == :pending
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      draft ->
+        {:ok, draft}
+    end
   end
 
   def get_user_draft(user_id) do

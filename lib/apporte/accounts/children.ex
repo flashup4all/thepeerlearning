@@ -76,6 +76,30 @@ defmodule PeerLearning.Accounts.Children do
     end
   end
 
+  def get_user_child(user_id) do
+    query = __MODULE__ |> where([child], child.user_id == ^user_id)
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      child ->
+        {:ok, child}
+    end
+  end
+
+  def get_user_child(user_id, child_id) do
+    query = __MODULE__ |> where([child], child.id == ^child_id and child.user_id == ^user_id)
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      child ->
+        {:ok, child}
+    end
+  end
+
   @spec update(
           PeerLearning.Accounts.Children.t(),
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}

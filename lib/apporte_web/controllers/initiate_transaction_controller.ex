@@ -34,4 +34,15 @@ defmodule PeerLearningWeb.InitiateTransactionController do
       |> render(:show, initiate_transaction: initiate_transaction)
     end
   end
+
+  def verify_payment_intent(conn, %{"payment_intent_id" => payment_intent_id}) do
+    user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+
+    with {:ok, initiate_transaction} <-
+           Billings.verify_payment_intent(user, payment_intent_id) do
+      conn
+      # |> put_status(:created)
+      |> render(:show, initiate_transaction: initiate_transaction)
+    end
+  end
 end

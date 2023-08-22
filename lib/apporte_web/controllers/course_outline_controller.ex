@@ -7,9 +7,9 @@ defmodule PeerLearningWeb.CourseOutlineController do
 
   action_fallback PeerLearningWeb.FallbackController
 
-  def index(conn, params) do
+  def index(conn, %{"course_id" => course_id} = params) do
     with {:ok, validated_params} <- Pagination.cast_and_validate(params),
-         course_outlines <- Courses.list_course_outlines(validated_params) do
+         course_outlines <- Courses.list_course_outlines(course_id, validated_params) do
       conn
       |> put_status(200)
       |> render(:index, course_outlines: course_outlines)

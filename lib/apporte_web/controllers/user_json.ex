@@ -1,6 +1,7 @@
 defmodule PeerLearningWeb.UserJSON do
   alias PeerLearning.Accounts.User
   alias PeerLearningWeb.UserProfileJSON
+  alias PeerLearningWeb.ChildrenJSON
 
   @doc """
   Renders a list of users.
@@ -43,7 +44,8 @@ defmodule PeerLearningWeb.UserJSON do
       is_email_verified: user.is_email_verified,
       is_phone_number_verified: user.is_phone_number_verified,
       registration_step: user.registration_step,
-      user_profile: UserProfileJSON.data(user.user_profile)
+      user_profile: UserProfileJSON.data(user.user_profile),
+      children: ChildrenJSON.index_from_assoc(%{children: user.children})
     }
   end
 end

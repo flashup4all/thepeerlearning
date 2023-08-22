@@ -8,7 +8,8 @@ defmodule PeerLearningEvents.EmailServiceJob do
   @valid_type [
     "deliver_email_verification",
     "deliver_updated_password_mail",
-    "deliver_forgot_password_url"
+    "deliver_forgot_password_url",
+    "deliver_subscription_reciept_mail"
   ]
 
   @impl Oban.Worker
@@ -29,13 +30,13 @@ defmodule PeerLearningEvents.EmailServiceJob do
     |> Oban.insert()
   end
 
-  # def deliver_welcome_message(user_payload) do
-  #   user_payload
-  #   |> new(priority: 2)
-  #   |> Oban.insert()
-  # end
-
   def deliver_forgot_password_url(payload) do
+    payload
+    |> new(priority: 2)
+    |> Oban.insert()
+  end
+
+  def deliver_subscription_reciept_mail(payload) do
     payload
     |> new(priority: 2)
     |> Oban.insert()
@@ -51,13 +52,13 @@ defmodule PeerLearningEvents.EmailServiceJob do
     _ = EmailService.deliver_updated_password_mail(payload)
   end
 
-  # defp do_perform(:deliver_welcome_message, user) do
-  #   :ok = Logger.info("begin processing deliver_welcome_message job")
-  #   _ = EmailService.deliver_welcome_message(user)
-  # end
-
   defp do_perform(:deliver_forgot_password_url, user) do
     :ok = Logger.info("begin processing deliver_forgot_password_url job")
     _ = EmailService.deliver_forgot_password_url(user)
+  end
+
+  defp do_perform(:deliver_subscription_reciept_mail, payload) do
+    :ok = Logger.info("begin processing deliver subscription reciept job")
+    _ = EmailService.deliver_subscription_reciept_mail(payload)
   end
 end
