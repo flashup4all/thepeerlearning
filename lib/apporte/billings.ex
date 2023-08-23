@@ -89,12 +89,15 @@ defmodule PeerLearning.Billings do
 
         initiate_transaction
       else
+        :completed ->
+          {:ok, initiate_transaction} = InitiateTransaction.get_by_gateway_ref(payment_intent_id)
+          # Repo.rollback(initiate_transaction)
+          initiate_transaction
+
         {:error, error} ->
-          {:error, error}
           Repo.rollback(error)
 
         error ->
-          {:error, error}
           Repo.rollback(error)
       end
     end)

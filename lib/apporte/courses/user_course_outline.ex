@@ -55,15 +55,15 @@ defmodule PeerLearning.Courses.UserCourseOutline do
   def changeset(
         %User{} = user,
         %CourseSubscription{} = course_subscription,
-        # %CourseOutline{} = course_outline,
         %Children{} = children,
+        %CourseOutline{} = course_outline,
         params
       ) do
     %__MODULE__{}
     |> cast(params, @cast_fields)
     |> validate_required(@required_fields)
     |> put_assoc(:user, user)
-    # |> put_assoc(:course_outline, course_outline)
+    |> put_assoc(:course_outline, course_outline)
     |> put_assoc(:course_subscription, course_subscription)
     |> put_assoc(:children, children)
   end
@@ -71,12 +71,17 @@ defmodule PeerLearning.Courses.UserCourseOutline do
   def create(
         %User{} = user,
         %CourseSubscription{} = course_subscription,
-        # %CourseOutline{} = course_outline,
         %Children{} = children,
+        %CourseOutline{} = course_outline,
         params
       ) do
-    changeset(user, course_subscription, children, params)
+    changeset(user, course_subscription, children, course_outline, params)
     |> Repo.insert()
+  end
+
+  def preload(query) do
+    query
+    |> preload([course_subscription], [:course_outline, :instructor])
   end
 
   def list(params) do
@@ -87,6 +92,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
       |> filter(:course_subscription_id, :eq, params.course_subscription_id)
       |> filter(:user_id, :eq, params.user_id)
       |> filter(:range, :date, params.from_date, params.to_date)
+      |> preload()
 
     Repo.paginate(query, page: params.page, page_size: params.limit)
   end
@@ -95,6 +101,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
     query =
       __MODULE__
       |> where([user_course_outline], user_course_outline.id == ^user_course_outline_id)
+      |> preload()
 
     case Repo.one(query) do
       nil ->

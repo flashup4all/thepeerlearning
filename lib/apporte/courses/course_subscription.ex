@@ -83,28 +83,32 @@ defmodule PeerLearning.Courses.CourseSubscription do
       |> filter(:user_id, :eq, params.user_id)
       |> filter(:is_active, :eq, params.is_active)
       |> filter(:range, :date, params.from_date, params.to_date)
-      |> v1_preload()
+      |> preload()
 
     # |> where([course], course.is_active == true)
 
     Repo.paginate(query, page: params.page, page_size: params.limit)
   end
 
-  def v1_preload(query) do
+  def preload(query) do
     query
-    |> preload([course_subscription], [:user_course_outlines])
+    |> preload([course_subscription], [
+      :course,
+      :children,
+      user_course_outlines: [:course_outline]
+    ])
   end
 
-  def preload(course_subscription) do
-    Repo.preload(course_subscription, [:user_course_outlines])
-  end
+  # def preload(course_subscription) do
+  #   Repo.preload(course_subscription, [:user_course_outlines])
+  # end
 
   def get_course_subscription(user_id, course_subscription_id) do
     query =
       __MODULE__
       |> where([course_subscription], course_subscription.id == ^course_subscription_id)
       |> where([course_subscription], course_subscription.user_id == ^user_id)
-      |> v1_preload()
+      |> preload()
 
     case Repo.one(query) do
       nil ->
@@ -118,8 +122,11 @@ defmodule PeerLearning.Courses.CourseSubscription do
   def get_user_active_course_subscription(user_id) do
     query =
       __MODULE__
-      |> where([course_subscription], course_subscription.user_id == ^user_id and course_subscription.is_active == true)
-      |> v1_preload()
+      |> where(
+        [course_subscription],
+        course_subscription.user_id == ^user_id and course_subscription.is_active == true
+      )
+      |> preload()
 
     case Repo.one(query) do
       nil ->

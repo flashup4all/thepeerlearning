@@ -200,7 +200,7 @@ defmodule PeerLearning.Courses do
            :ok <-
              schedule_manager(
                weeks,
-               course_outlines,
+               Enum.chunk_every(course_outlines, 2),
                DateTime.utc_now(),
                user,
                child,
@@ -222,7 +222,7 @@ defmodule PeerLearning.Courses do
 
   defp schedule_manager(
          [first_week | schedules],
-         course_outlines,
+         [chucked_outline | course_outlines],
          today,
          user,
          child,
@@ -230,7 +230,8 @@ defmodule PeerLearning.Courses do
          course_subscription
        ) do
     first_week["schedules"]
-    |> Enum.each(fn schedule ->
+    |> Enum.with_index()
+    |> Enum.each(fn {schedule, i} ->
       end_of_week = Date.end_of_week(today)
       start_day = days_of_the_week(schedule["day"])
       class_schedule_date = end_of_week |> Date.add(start_day)
@@ -244,7 +245,13 @@ defmodule PeerLearning.Courses do
         time: Time.to_string(time)
       }
 
-      UserCourseOutline.create(user, course_subscription, child, params)
+      UserCourseOutline.create(
+        user,
+        course_subscription,
+        child,
+        Enum.at(chucked_outline, i),
+        params
+      )
     end)
 
     next_week = today |> Date.add(7)

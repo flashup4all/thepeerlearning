@@ -1,5 +1,6 @@
 defmodule PeerLearningWeb.UserCourseOutlineJSON do
   alias PeerLearning.Courses.UserCourseOutline
+  alias PeerLearningWeb.CourseOutlineJSON
 
   @doc """
   Renders a list of courses.
@@ -19,6 +20,10 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
       total_entries: user_course_outlines.total_entries,
       total_pages: user_course_outlines.total_pages
     }
+  end
+
+  def index_assoc(%{user_course_outlines: user_course_outlines}) do
+    for(user_course_outline <- user_course_outlines, do: data(user_course_outline))
   end
 
   @doc """
@@ -48,7 +53,8 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
       course_outline_id: user_course_outline.course_outline_id,
       course_subscription_id: user_course_outline.course_subscription_id,
       inserted_at: user_course_outline.inserted_at,
-      updated_at: user_course_outline.updated_at
+      updated_at: user_course_outline.updated_at,
+      course_outline: CourseOutlineJSON.data(user_course_outline.course_outline)
     }
   end
 end

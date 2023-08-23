@@ -1,6 +1,8 @@
 defmodule PeerLearningWeb.CourseSubscriptionJSON do
   alias PeerLearning.Courses.CourseSubscription
   alias PeerLearningWeb.UserCourseOutlineJSON
+  alias PeerLearningWeb.CourseJSON
+  alias PeerLearningWeb.ChildrenJSON
 
   @doc """
   Renders a list of courses.
@@ -46,8 +48,10 @@ defmodule PeerLearningWeb.CourseSubscriptionJSON do
       children_id: course_subscription.children_id,
       inserted_at: course_subscription.inserted_at,
       updated_at: course_subscription.updated_at,
+      course: CourseJSON.data(course_subscription.course),
+      chilren: ChildrenJSON.data(course_subscription.children),
       user_course_outlines:
-        UserCourseOutlineJSON.index(%{
+        UserCourseOutlineJSON.index_assoc(%{
           user_course_outlines: course_subscription.user_course_outlines
         })
     }
