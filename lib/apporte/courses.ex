@@ -288,6 +288,10 @@ defmodule PeerLearning.Courses do
     CourseSubscription.get_course_subscription(user.id, course_subscription_id)
   end
 
+  def list_user_active_course_subscription(%User{} = user) do
+    CourseSubscription.get_user_active_course_subscription(user.id)
+  end
+
   def list_user_course_outlines(%User{} = user, params) do
     UserCourseOutline.list(params |> Map.put(:user_id, user.id))
   end

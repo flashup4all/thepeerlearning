@@ -115,6 +115,21 @@ defmodule PeerLearning.Courses.CourseSubscription do
     end
   end
 
+  def get_user_active_course_subscription(user_id) do
+    query =
+      __MODULE__
+      |> where([course_subscription], course_subscription.user_id == ^user_id and course_subscription.is_active == true)
+      |> v1_preload()
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      course ->
+        {:ok, course}
+    end
+  end
+
   def update(%__MODULE__{} = course, update_params) do
     course
     |> cast(update_params, @cast_fields -- [:unique_name])

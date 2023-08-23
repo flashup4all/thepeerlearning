@@ -17,6 +17,17 @@ defmodule PeerLearningWeb.CourseSubscriptionController do
     end
   end
 
+  def show_active_course(conn, _params) do
+    user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+    IO.inspect user
+    with {:ok, course_subscription} = course_subscriptions <-
+           Courses.list_user_active_course_subscription(user) do
+      conn
+      |> put_status(200)
+      |> render(:show, course_subscription: course_subscription)
+    end
+  end
+
   def show(conn, %{"course_subscription_id" => course_subscription_id}) do
     user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
 

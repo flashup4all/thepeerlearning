@@ -55,6 +55,8 @@ defmodule PeerLearningWeb.Router do
           resources "/class-schedule-drafts", ClassScheduleDraftController
           get "/courses-subscriptions", CourseSubscriptionController, :index
 
+          get "/courses-subscriptions/active", CourseSubscriptionController, :show_active_course
+
           get "/courses-subscriptions/:course_subscription_id",
               CourseSubscriptionController,
               :show
