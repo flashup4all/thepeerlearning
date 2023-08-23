@@ -177,7 +177,7 @@ defmodule PeerLearning.Courses do
     Repo.transaction(fn ->
       #  :ok <- insert_many_user_course_outline(user, children, course, course_subscription, weeks)
       with {:ok, %ClassScheduleDraft{} = draft} <-
-             ClassScheduleDraft.get_user_draft(user_id),
+             ClassScheduleDraft.get_user_pending_draft(user_id),
            {:ok,
             %{
               "weeks" => weeks,

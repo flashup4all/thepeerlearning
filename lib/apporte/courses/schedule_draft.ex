@@ -71,6 +71,23 @@ defmodule PeerLearning.Courses.ClassScheduleDraft do
     end
   end
 
+  def get_user_pending_draft(user_id) do
+    query =
+      __MODULE__
+      |> where(
+        [draft],
+        draft.user_id == ^user_id and draft.status == :pending
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      draft ->
+        {:ok, draft}
+    end
+  end
+
   def get_user_draft(user_id) do
     query = __MODULE__ |> where([children], children.user_id == ^user_id)
 
