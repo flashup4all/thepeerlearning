@@ -31,11 +31,28 @@ defmodule PeerLearningWeb.CourseSubscriptionController do
   def show(conn, %{"course_subscription_id" => course_subscription_id}) do
     user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
 
-    with {:ok, course_subscription} = course_subscriptions <-
+    with {:ok, course_subscription} <-
            Courses.list_user_course_subscription(user, course_subscription_id) do
       conn
       |> put_status(200)
       |> render(:show, course_subscription: course_subscription)
     end
+  end
+
+  def process_user_courses(conn, %{"user_id" => user_id, "transaction_id" => transaction_id}) do
+    user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+
+    # with {:ok, course_subscription} <-
+           Courses.process_user_courses(user_id, transaction_id) |> IO.inspect #do
+      conn
+      |> put_status(:created)
+      |> json(%{
+        # data: Jason.decode!(class_schedule_draft.content),
+        status: "success"
+      })
+    #   conn
+    #   |> put_status(200)
+    #   |> render(:show, course_subscription: course_subscription)
+    # end
   end
 end

@@ -60,6 +60,7 @@ defmodule PeerLearningWeb.Router do
           get "/courses-subscriptions/:course_subscription_id",
               CourseSubscriptionController,
               :show
+          get ":user_id/transactions/:transaction_id/setup-user-course", CourseSubscriptionController, :process_user_courses
 
           get "/courses-subscriptions/:course_subscription_id/course-outlines",
               UserCourseOutlineController,

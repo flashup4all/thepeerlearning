@@ -174,6 +174,8 @@ defmodule PeerLearning.Courses do
   end
 
   def create_user_courses(user_id, transaction_id) do
+    IO.inspect user_id
+    IO.inspect transaction_id
     Repo.transaction(fn ->
       #  :ok <- insert_many_user_course_outline(user, children, course, course_subscription, weeks)
       with {:ok, %ClassScheduleDraft{} = draft} <-
@@ -185,18 +187,18 @@ defmodule PeerLearning.Courses do
               "children_id" => children_id,
               "timezone" => timezone,
               "start_date" => start_date
-            } = decoded_draft} <- Jason.decode(draft.content),
-           {:ok, %User{} = user} <- User.get_user(user_id),
-           {:ok, %Course{} = course} <- Course.get_course(course_id),
-           {:ok, %Children{} = child} <- Children.get_user_child(user.id, children_id),
-           {:ok, %Transaction{} = transaction} <- Transaction.get_transaction(transaction_id),
+            } = decoded_draft} <- Jason.decode(draft.content) |> IO.inspect,
+           {:ok, %User{} = user} <- User.get_user(user_id)|> IO.inspect,
+           {:ok, %Course{} = course} <- Course.get_course(course_id)|> IO.inspect,
+           {:ok, %Children{} = child} <- Children.get_user_child(user.id, children_id)|> IO.inspect,
+           {:ok, %Transaction{} = transaction} <- Transaction.get_transaction(transaction_id)|> IO.inspect,
            {:ok, %CourseSubscription{} = course_subscription} <-
              CourseSubscription.create(user, child, course, transaction, %{
                timezone: timezone,
                start_date: start_date
-             }),
+             })|> IO.inspect,
            [%CourseOutline{} | _] = course_outlines <-
-             CourseOutline.course_outlines(course_subscription.course_id),
+             CourseOutline.course_outlines(course_subscription.course_id)|> IO.inspect,
            :ok <-
              schedule_manager(
                weeks,
@@ -206,10 +208,10 @@ defmodule PeerLearning.Courses do
                child,
                course,
                course_subscription
-             ),
+             )|> IO.inspect,
            {:ok, %ClassScheduleDraft{} = draft} <-
-             ClassScheduleDraft.update(draft, %{status: :completed}) do
-        course_subscription
+             ClassScheduleDraft.update(draft, %{status: :completed})|> IO.inspect do
+              course_subscription |> IO.inspect
       else
         {:error, error} ->
           Repo.rollback(error)
@@ -235,7 +237,7 @@ defmodule PeerLearning.Courses do
       end_of_week = Date.end_of_week(today)
       start_day = days_of_the_week(schedule["day"])
       class_schedule_date = end_of_week |> Date.add(start_day)
-      {:ok, time} = Time.from_iso8601(schedule["time"] <> ":00")
+      {:ok, time} = Time.from_iso8601(schedule["time"] <> ":00") |> IO.inspect
       {:ok, start_date} = NaiveDateTime.new(class_schedule_date, time)
 
       # {:ok, start_date} = DateTime.new(Date.from_iso8601!(class_schedule_date), time) |> IO.inspect
@@ -285,6 +287,16 @@ defmodule PeerLearning.Courses do
       "saturday" -> 6
       "sunday" -> 7
     end
+  end
+
+  def process_user_courses(user_id, transaction_id) do
+    PeerLearningEvents.course_service_to_create_user_courses(%{
+      "type" => "create_user_courses",
+      "payload" => %{
+        "user_id" => user_id,
+        "transaction_id" => transaction_id
+      }
+    })
   end
 
   def list_user_course_subscriptions(%User{} = user, %UserCoursePagination{} = params) do
