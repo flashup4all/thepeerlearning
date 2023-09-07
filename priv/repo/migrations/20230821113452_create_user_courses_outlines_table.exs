@@ -15,7 +15,7 @@ defmodule PeerLearning.Repo.Migrations.CreateUserCoursesOutlinesTable do
       add :date, :utc_datetime_usec
       add :time, :string
 
-      add :instructor_id, references(:users)
+      # add :instructor_id, references(:users)
       add :user_id, references(:users)
       add :children_id, references(:children)
       add :course_outline_id, references(:course_outlines)

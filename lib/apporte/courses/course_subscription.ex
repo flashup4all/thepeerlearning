@@ -25,6 +25,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
     field :rating, :integer
 
     belongs_to(:user, User)
+    belongs_to(:instructor, User)
     belongs_to(:course, Course)
     belongs_to(:transaction, Transaction)
     belongs_to(:children, PeerLearning.Accounts.Children)
@@ -49,6 +50,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
         %Children{} = child,
         %Course{} = course,
         %Transaction{} = transaction,
+        %User{} = instructor,
         params
       ) do
     %__MODULE__{}
@@ -58,6 +60,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
     |> put_assoc(:course, course)
     |> put_assoc(:transaction, transaction)
     |> put_assoc(:children, child)
+    |> put_assoc(:instructor, instructor)
   end
 
   def create(
@@ -65,6 +68,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
         %Children{} = child,
         %Course{} = course,
         %Transaction{} = transaction,
+        %User{} = instructor,
         params
       ) do
     {:ok, start_date} = DateTime.new(Date.from_iso8601!(params.start_date), Time.utc_now())
@@ -72,7 +76,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
 
     params = Map.put(params, :start_date, start_date) |> Map.put(:end_date, end_date)
 
-    changeset(user, child, course, transaction, params)
+    changeset(user, child, course, transaction, instructor, params)
     |> Repo.insert()
   end
 
@@ -95,6 +99,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
     |> preload([course_subscription], [
       :course,
       :children,
+      :instructor,
       user_course_outlines: [:course_outline]
     ])
   end

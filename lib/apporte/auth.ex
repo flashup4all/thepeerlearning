@@ -20,6 +20,8 @@ defmodule PeerLearning.Auth do
 
   """
   def create_user(%RegisterUser{parent: parent, child: child, user: user} = _params) do
+    user = %{user | role: :parent}
+
     Repo.transaction(fn ->
       with {:ok, %User{} = user} <-
              User.create_user(Map.from_struct(%{user | email: String.downcase(user.email)})),
@@ -42,6 +44,38 @@ defmodule PeerLearning.Auth do
         })
 
         %{user: Repo.preload(user, [:children, :user_profile]), token: token}
+      else
+        {:error, error} ->
+          Repo.rollback(error)
+
+        error ->
+          error
+      end
+    end)
+  end
+
+  def create_instructor(%RegisterUser{instructor: instructor, user: user} = _params) do
+    user = %{user | role: :instructor}
+
+    Repo.transaction(fn ->
+      with {:ok, %User{} = user} <-
+             User.create_user(Map.from_struct(%{user | email: String.downcase(user.email)})),
+           {:ok, %UserProfile{} = user_profile} <-
+             UserProfile.create_user_profile(user, Map.from_struct(instructor)),
+           {:ok, user_token} <- UserToken.create_user_token(user, "email_verification") do
+        [first_name | last_name] = split_fullname(user_profile.fullname)
+
+        PeerLearningEvents.email_service_deliver_email_confirmation(%{
+          "type" => "deliver_email_verification",
+          "payload" => %{
+            "hashed_token" => Base.url_encode64(user_token.token, padding: false),
+            "email" => user.email,
+            "first_name" => first_name,
+            "last_name" => last_name
+          }
+        })
+
+        Repo.preload(user, [:children, :user_profile])
       else
         {:error, error} ->
           Repo.rollback(error)

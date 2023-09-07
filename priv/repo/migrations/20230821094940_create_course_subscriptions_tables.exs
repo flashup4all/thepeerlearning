@@ -15,6 +15,7 @@ defmodule PeerLearning.Repo.Migrations.CreateCourseSubscriptionsTables do
       add :children_id, references(:children)
       add :course_id, references(:courses)
       add :transaction_id, references(:transactions)
+      add :instructor_id, references(:users)
 
       timestamps()
     end

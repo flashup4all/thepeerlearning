@@ -11,6 +11,7 @@ defmodule PeerLearningWeb.Validators.RegisterUser do
     embeds_one(:parent, CreateUserProfile)
     embeds_one(:child, CreateUserChild)
     embeds_one(:user, CreateUser)
+    embeds_one(:instructor, CreateUserProfile)
   end
 
   @required_fields []
@@ -22,6 +23,15 @@ defmodule PeerLearningWeb.Validators.RegisterUser do
     |> cast_embed(:user, required: true)
     |> cast_embed(:parent, required: true)
     |> cast_embed(:child, required: true)
+    |> validate_required(@required_fields)
+    |> apply_changes_if_valid()
+  end
+
+  def cast_and_validate_instructor(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, @cast_fields)
+    |> cast_embed(:user, required: true)
+    |> cast_embed(:instructor, required: true)
     |> validate_required(@required_fields)
     |> apply_changes_if_valid()
   end

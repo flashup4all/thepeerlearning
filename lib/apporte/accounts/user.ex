@@ -3,6 +3,7 @@ defmodule PeerLearning.Accounts.User do
 
   use PeerLearning.Schema
   alias PeerLearning.Repo
+  import PeerLearning.DynamicFilter
 
   import Ecto.Changeset
 
@@ -25,7 +26,7 @@ defmodule PeerLearning.Accounts.User do
       values: [:account_created, :class_schedule, :completed],
       default: :account_created
 
-    field :role, Ecto.Enum, values: [:rider, :admin, :super_admin, :user, :branch_admin]
+    field :role, Ecto.Enum, values: [:child, :admin, :super_admin, :instructor, :parent]
     field :user_type, Ecto.Enum, values: [:user, :business]
 
     has_many(:children, PeerLearning.Accounts.Children)
@@ -123,5 +124,15 @@ defmodule PeerLearning.Accounts.User do
       %__MODULE__{} = user -> {:ok, user}
       nil -> {:error, :not_found}
     end
+  end
+
+  def default_instructor() do
+    result =
+      __MODULE__
+      |> filter(:role, :eq, :instructor)
+      |> Repo.all()
+
+    [instructor | _] = result
+    {:ok, instructor}
   end
 end

@@ -43,13 +43,16 @@ defmodule PeerLearningWeb.CourseSubscriptionController do
     user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
 
     # with {:ok, course_subscription} <-
-           Courses.process_user_courses(user_id, transaction_id) |> IO.inspect #do
-      conn
-      |> put_status(:created)
-      |> json(%{
-        # data: Jason.decode!(class_schedule_draft.content),
-        status: "success"
-      })
+    # do
+    Courses.process_user_courses(user_id, transaction_id)
+
+    conn
+    |> put_status(:created)
+    |> json(%{
+      # data: Jason.decode!(class_schedule_draft.content),
+      status: "success"
+    })
+
     #   conn
     #   |> put_status(200)
     #   |> render(:show, course_subscription: course_subscription)

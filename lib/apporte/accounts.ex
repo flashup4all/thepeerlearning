@@ -12,10 +12,10 @@ defmodule PeerLearning.Accounts do
   def update_user_profile(user_id, params) do
     Repo.transaction(fn ->
       with {:ok, %User{} = user} <- User.get_user(user_id),
-           {:ok, %UserProfile{} = user_profile} <- UserProfile.get_user_profile_by_user_id(user.id),
+           {:ok, %UserProfile{} = user_profile} <-
+             UserProfile.get_user_profile_by_user_id(user.id),
            {:ok, %UserProfile{} = user_profile} <- UserProfile.update(user_profile, params) do
-
-            user_profile
+        user_profile
       else
         {:error, error} ->
           Repo.rollback(error)

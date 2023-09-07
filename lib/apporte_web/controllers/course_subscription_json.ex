@@ -3,6 +3,7 @@ defmodule PeerLearningWeb.CourseSubscriptionJSON do
   alias PeerLearningWeb.UserCourseOutlineJSON
   alias PeerLearningWeb.CourseJSON
   alias PeerLearningWeb.ChildrenJSON
+  alias PeerLearningWeb.UserJSON
 
   @doc """
   Renders a list of courses.
@@ -45,11 +46,17 @@ defmodule PeerLearningWeb.CourseSubscriptionJSON do
       user_id: course_subscription.user_id,
       course_id: course_subscription.course_id,
       transaction_id: course_subscription.transaction_id,
+      instructor_id: course_subscription.instructor_id,
       children_id: course_subscription.children_id,
       inserted_at: course_subscription.inserted_at,
       updated_at: course_subscription.updated_at,
       course: CourseJSON.data(course_subscription.course),
       chilren: ChildrenJSON.data(course_subscription.children),
+      instructor:
+        if(Ecto.assoc_loaded?(course_subscription.instructor),
+          do: UserJSON.data(course_subscription.instructor),
+          else: nil
+        ),
       user_course_outlines:
         UserCourseOutlineJSON.index_assoc(%{
           user_course_outlines: course_subscription.user_course_outlines

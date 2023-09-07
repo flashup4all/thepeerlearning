@@ -48,7 +48,6 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
       instructor_status: user_course_outline.instructor_status,
       child_status: user_course_outline.child_status,
       user_id: user_course_outline.user_id,
-      instructor_id: user_course_outline.instructor_id,
       children_id: user_course_outline.children_id,
       course_outline_id: user_course_outline.course_outline_id,
       course_subscription_id: user_course_outline.course_subscription_id,

@@ -32,7 +32,6 @@ defmodule PeerLearningWeb.UserJSON do
     %{
       id: user.id,
       email: user.email,
-      password_hash: user.password_hash,
       user_type: user.user_type,
       role: user.role,
       phone_number: user.phone_number,
@@ -44,8 +43,16 @@ defmodule PeerLearningWeb.UserJSON do
       is_email_verified: user.is_email_verified,
       is_phone_number_verified: user.is_phone_number_verified,
       registration_step: user.registration_step,
-      user_profile: UserProfileJSON.data(user.user_profile),
-      children: ChildrenJSON.index_from_assoc(%{children: user.children})
+      user_profile:
+        if(Ecto.assoc_loaded?(user.user_profile),
+          do: UserProfileJSON.data(user.user_profile),
+          else: nil
+        ),
+      children:
+        if(Ecto.assoc_loaded?(user.children),
+          do: ChildrenJSON.index_from_assoc(%{children: user.children}),
+          else: nil
+        )
     }
   end
 end

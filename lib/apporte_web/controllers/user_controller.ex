@@ -19,13 +19,20 @@ defmodule PeerLearningWeb.UserController do
          {:ok, %{user: user, token: token}} <- Auth.create_user(validated_params) do
       conn
       |> put_status(:created)
-      # |> put_resp_header("location", ~p"/api/users/#{user}")
-      # |> render(:show, user: user)
       |> put_view(PeerLearningWeb.AuthJSON)
       |> render("auth.json", %{
         token: token,
         user: user
       })
+    end
+  end
+
+  def create_intructor(conn, params) do
+    with {:ok, validated_params} <- RegisterUser.cast_and_validate_instructor(params),
+         {:ok, user} <- Auth.create_instructor(validated_params) do
+      conn
+      |> put_status(:created)
+      |> render(:show, user: user)
     end
   end
 

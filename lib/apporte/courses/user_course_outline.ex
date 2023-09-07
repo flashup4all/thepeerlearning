@@ -27,7 +27,6 @@ defmodule PeerLearning.Courses.UserCourseOutline do
     field :child_status, Ecto.Enum, values: [:completed, :pending, :ongoing]
 
     belongs_to(:user, User)
-    belongs_to(:instructor, User)
     belongs_to(:children, Children)
     belongs_to(:course_outline, CourseOutline)
     belongs_to(:course_subscription, CourseSubscription)
@@ -81,7 +80,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
 
   def preload(query) do
     query
-    |> preload([course_subscription], [:course_outline, :instructor])
+    |> preload([course_subscription], [:course_outline])
   end
 
   def list(params) do

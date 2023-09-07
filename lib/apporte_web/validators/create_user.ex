@@ -11,12 +11,12 @@ defmodule PeerLearningWeb.Validators.CreateUser do
     field :email, :string
     field :password, :string
     field :user_type, Ecto.Enum, values: [:user, :business]
-    field :role, Ecto.Enum, values: [:rider, :admin, :super_admin, :user, :branch_admin]
+    field :role, Ecto.Enum, values: [:child, :admin, :super_admin, :instructor, :parent]
     field :phone_number, :string
   end
 
-  @required_fields [:email, :password, :user_type, :role, :phone_number]
-  @cast_fields @required_fields
+  @required_fields [:email, :password, :user_type, :phone_number]
+  @cast_fields [:role] ++ @required_fields
   @doc false
   def changeset(schema, attrs) do
     schema
