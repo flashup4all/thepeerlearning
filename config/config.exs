@@ -148,9 +148,21 @@ stripe_secret =
     environment variable STRIPE_SECRET is missing.
     """
 
+    zoom_account_id =
+  System.get_env("ZOOM_ACCOUNT_ID") ||
+    raise """
+    environment variable ZOOM_ACCOUNT_ID is missing.
+    """
+    
+
 config :peer_learning, PeerLearning.Integrations.Stripe,
   api_secret_key: stripe_secret,
   base_url: "https://api.stripe.com/v1"
+
+config :peer_learning, PeerLearning.Integrations.Zoom,
+  account_id: zoom_account_id,
+  oauth_base_url: "https://zoom.us",
+  base_url: "https://api.zoom.us/v2"
 
 config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET")
 

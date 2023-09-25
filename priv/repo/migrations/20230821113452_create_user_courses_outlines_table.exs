@@ -4,7 +4,7 @@ defmodule PeerLearning.Repo.Migrations.CreateUserCoursesOutlinesTable do
   def change do
     create table(:user_course_outlines) do
       add :status, :string
-      add :meeting_url, :string
+      add :meeting_url, :text
       add :notes, :text
       add :child_feedback, :text
       add :instructor_feedback, :text

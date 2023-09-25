@@ -15,7 +15,7 @@ defmodule PeerLearning.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: PeerLearning.PubSub},
       # Start Finch
-      {Finch, name: PeerLearning.Finch},
+      {Finch, name: PeerLearningFinch},
       # Start the Endpoint (http/https)
       PeerLearningWeb.Endpoint,
       # Start Oban Jobs

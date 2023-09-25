@@ -20,4 +20,8 @@ defmodule PeerLearningEvents do
   defdelegate course_service_to_create_user_courses(payload),
     to: PeerLearningEvents.CourseServiceJob,
     as: :create_user_courses
+  
+  defdelegate course_service_to_create_zoom_meeting_url_for_course_outline(payload),
+    to: PeerLearningEvents.CourseServiceJob,
+    as: :create_zoom_url_for_course_outline
 end

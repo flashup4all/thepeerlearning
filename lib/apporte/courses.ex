@@ -5,6 +5,7 @@ defmodule PeerLearning.Courses do
 
   import Ecto.Query, warn: false
   alias PeerLearning.Repo
+  alias PeerLearning.Integrations.Zoom
 
   alias PeerLearning.Accounts.{User, UserProfile, Children}
 
@@ -246,13 +247,24 @@ defmodule PeerLearning.Courses do
         time: Time.to_string(time)
       }
 
-      UserCourseOutline.create(
+      {:ok, outline} = UserCourseOutline.create(
         user,
         course_subscription,
         child,
         Enum.at(chucked_outline, i),
         params
       )
+      # generate zoom url
+      PeerLearningEvents.course_service_to_create_zoom_meeting_url_for_course_outline(%{
+        "type" => "create_zoom_url_for_course_outline",
+        "payload" => %{
+          "user_email" => user.email,
+          "user_course_outline_id" => outline.id,
+          "course_outline_title" => Enum.at(chucked_outline, i).title,
+          "course_outline_description" => Enum.at(chucked_outline, i).description
+        }
+      })
+
     end)
 
     next_week = today |> Date.add(7)
@@ -296,6 +308,36 @@ defmodule PeerLearning.Courses do
         "transaction_id" => transaction_id
       }
     })
+  end
+
+  def create_zoom_url_for_course_outline(payload) do
+    IO.inspect payload
+    with {:ok, %UserCourseOutline{} = user_course_outline} <-
+      UserCourseOutline.get(payload["user_course_outline_id"]) |> IO.inspect,
+      {:ok, zoom_auth_response} <- Zoom.create_oauth_token(),
+      {:ok, zoom_response} <- Zoom.create_meeting(%{
+        agenda: payload["course_outline_description"],
+        type: 1,
+        settings: %{
+          allow_multiple_devices: true,
+        },
+        meeting_invitees: [
+         %{
+           email: payload["user_email"]
+         }
+       ],
+        email_notification: true,
+        start_time: user_course_outline.date,
+        timezone: "America/Los_Angeles",
+        topic: payload["course_outline_title"]
+      }, zoom_auth_response["access_token"]),
+      {:ok, %UserCourseOutline{} = user_course_outline} <-
+        UserCourseOutline.update(user_course_outline, %{
+          meeting_url: zoom_response["start_url"]
+        }) do
+          user_course_outline |> IO.inspect
+ {:ok, user_course_outline}
+end
   end
 
   def list_user_course_subscriptions(%User{} = user, %UserCoursePagination{} = params) do
