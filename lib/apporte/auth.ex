@@ -55,7 +55,7 @@ defmodule PeerLearning.Auth do
   end
 
   def create_instructor(%RegisterUser{instructor: instructor, user: user} = _params) do
-    user = %{user | role: :instructor}
+    user = Map.put(user, :role, :instructor)
 
     Repo.transaction(fn ->
       with {:ok, %User{} = user} <-
