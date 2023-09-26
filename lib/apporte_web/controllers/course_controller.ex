@@ -50,4 +50,13 @@ defmodule PeerLearningWeb.CourseController do
       |> render(:show, course: course)
     end
   end
+
+  def seeder(conn, _params) do
+    Courses.seed()
+      conn
+      |> put_status(200)
+      |> json(%{
+        status: "ok"
+      })
+  end
 end

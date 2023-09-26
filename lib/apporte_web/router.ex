@@ -44,7 +44,8 @@ defmodule PeerLearningWeb.Router do
 
       post "/login", AuthController, :login
       post "/send_mail", AuthController, :send_mail
-
+      post "/seeder", CourseController, :seeder
+      
       # resources "/users", UserController, except: [:new, :edit]
       scope "/" do
         pipe_through :auth

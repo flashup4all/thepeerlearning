@@ -364,4 +364,45 @@ end
       {:ok, user_course_outline}
     end
   end
+
+  def seed() do
+    courses = [
+      %{
+          title: "Web Development",
+          description: "Our web development curriculum pathway is designed to teach kids the skills they need to become a successful web developer. The pathway is divided into four courses: kids will learn everything they need to know to create beautiful responsive websites from scratch.",
+          amount: 120000, # in cents
+          default_currency: "USD",
+          age_range: "10-13",
+          level: "2",
+          unique_name: "web_dev34",
+      },
+      %{
+          title: "Game Design",
+          description: "This is where it all begins! This pathway is designed to help students learn the fundamentals of coding and computational thinking in a fun and engaging way while designing their own games and animations. The pathway is divided into three levels, each of which builds on the skills learned in the previous level.",
+          amount: 120000, # in cents
+          default_currency: "USD",
+          age_range: "7-9",
+          level: "1",
+          unique_name: "game_dev34",
+      },
+    ]
+    Enum.each(courses, fn course -> 
+      Course.create(course)
+    end)
+
+      user = %{
+          email: "instructor03@gmail.com",
+          password: "Ahe@d123",
+          phone_number: "2348032413264",
+          user_type: "user",
+          role: :instructor
+      }
+      profile = %{
+          fullname: "John Doe",
+          country: "Nigeria"
+      }
+      {:ok, %User{} = user} = User.create_user(%{user | email: String.downcase(user.email)})
+      {:ok, %UserProfile{} = user_profile} = UserProfile.create_user_profile(user, profile)
+      :ok
+  end
 end
