@@ -99,7 +99,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
     |> preload([course_subscription], [
       :course,
       :children,
-      :instructor,
+      instructor: [:user_profile],
       user_course_outlines: [:course_outline]
     ])
   end

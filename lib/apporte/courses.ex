@@ -210,7 +210,7 @@ defmodule PeerLearning.Courses do
                course_subscription
              ),
            {:ok, %ClassScheduleDraft{} = draft} <-
-             ClassScheduleDraft.update(draft, %{status: :completed})|> IO.inspect do
+             ClassScheduleDraft.update(draft, %{status: :completed}) do
         course_subscription
       else
         {:error, error} ->
@@ -253,7 +253,7 @@ defmodule PeerLearning.Courses do
         child,
         Enum.at(chucked_outline, i),
         params
-      ) |> IO.inspect
+      )
       # generate zoom url
       PeerLearningEvents.course_service_to_create_zoom_meeting_url_for_course_outline(%{
         "type" => "create_zoom_url_for_course_outline",
@@ -311,9 +311,8 @@ defmodule PeerLearning.Courses do
   end
 
   def create_zoom_url_for_course_outline(payload) do
-    IO.inspect payload
     with {:ok, %UserCourseOutline{} = user_course_outline} <-
-      UserCourseOutline.get(payload["user_course_outline_id"]) |> IO.inspect,
+      UserCourseOutline.get(payload["user_course_outline_id"]),
       {:ok, zoom_auth_response} <- Zoom.create_oauth_token(),
       {:ok, zoom_response} <- Zoom.create_meeting(%{
         agenda: payload["course_outline_description"],
@@ -335,7 +334,6 @@ defmodule PeerLearning.Courses do
         UserCourseOutline.update(user_course_outline, %{
           meeting_url: zoom_response["start_url"]
         }) do
-          user_course_outline |> IO.inspect
  {:ok, user_course_outline}
 end
   end

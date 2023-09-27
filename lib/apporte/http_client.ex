@@ -37,15 +37,11 @@ defmodule PeerLearning.HTTPClient do
 
   defp maybe_post_or_put(request_type, url, body, headers, options)
        when request_type in [:post, :put] do
-    # IO.inspect "jhjhdsjshdjdhjsh"
-    # body |> IO.inspect
-    # Jason.encode(body) |> IO.inspect
 
-    with {:ok, encoded_body} <- Jason.encode(body) |> IO.inspect(),
+    with {:ok, encoded_body} <- Jason.encode(body),
          %Finch.Request{} =
            request =
-           Finch.build(request_type, URI.encode(url), headers, encoded_body, options)
-           |> IO.inspect(),
+           Finch.build(request_type, URI.encode(url), headers, encoded_body, options),
          {:ok, %Finch.Response{status: status, body: response_body}} when status in 200..299 <-
            Finch.request(request, PeerLearningFinch),
          {:ok, decoded_response} <- decode_or_return_raw(response_body) do

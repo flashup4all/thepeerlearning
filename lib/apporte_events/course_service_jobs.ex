@@ -35,7 +35,6 @@ defmodule PeerLearningEvents.CourseServiceJob do
   end
 
   defp do_perform(:create_zoom_url_for_course_outline, payload) do
-    IO.inspect payload
     :ok = Logger.info("begin processing create_zoom_url_for_course_outline job")
     _ = Courses.create_zoom_url_for_course_outline(payload)
     :ok = Logger.info("end processing create_zoom_url_for_course_outline job")

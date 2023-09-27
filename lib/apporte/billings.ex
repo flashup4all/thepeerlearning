@@ -63,7 +63,7 @@ defmodule PeerLearning.Billings do
              InitiateTransaction.get_by_gateway_ref(payment_intent_id),
            :initiated <- initiate_transaction.status,
            {:ok, %Stripe.PaymentIntent{} = payment_intent} <-
-             Stripe.PaymentIntent.retrieve(payment_intent_id, %{}) |> IO.inspect,
+             Stripe.PaymentIntent.retrieve(payment_intent_id, %{}),
            "succeeded" <- payment_intent.status,
            {:ok, %Transaction{} = transaction} <-
              Transaction.create(user, initiate_transaction, %{

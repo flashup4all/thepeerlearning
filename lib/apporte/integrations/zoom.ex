@@ -28,9 +28,7 @@ defmodule PeerLearning.Integrations.Zoom do
   end
 
   def create_meeting(payload, token) do
-    (@base_url <> "/users/me/meetings") |> IO.inspect()
-    secret_key() |> IO.inspect()
-    headers() |> IO.inspect()
+    (@base_url <> "/users/me/meetings")
     {:ok, response} = create_oauth_token()
     IO.inspect(response["access_token"])
 
@@ -47,7 +45,7 @@ defmodule PeerLearning.Integrations.Zoom do
         {:ok, response}
 
       {:error, error} ->
-        error |> IO.inspect()
+        error
         # Logger.info("CustomerIO: successfully created customer.")
         {:error, error}
     end
