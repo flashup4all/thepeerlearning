@@ -51,6 +51,7 @@ defmodule PeerLearningWeb.Router do
         pipe_through :auth
 
         scope "/users" do
+          post "/change-password", UserController, :change_password
           put "/:id", UserProfileController, :update
           post "/instructors", UserController, :create_intructor
           resources "/children", ChildrenController
@@ -62,6 +63,7 @@ defmodule PeerLearningWeb.Router do
           get "/courses-subscriptions/:course_subscription_id",
               CourseSubscriptionController,
               :show
+          get "/:id", UserController, :show
 
           get ":user_id/transactions/:transaction_id/setup-user-course",
               CourseSubscriptionController,
@@ -76,6 +78,16 @@ defmodule PeerLearningWeb.Router do
               :show
         end
 
+
+        scope "/admin" do
+          get "/courses-subscriptions/course-outlines",
+              UserCourseOutlineController,
+              :index
+
+          get "/courses-subscriptions/:course_subscription_id/course-outlines/:user_course_outline_id",
+              UserCourseOutlineController,
+              :show
+        end
         scope "/courses" do
           resources "/", CourseController
           resources "/:course_id/outlines", CourseOutlineController

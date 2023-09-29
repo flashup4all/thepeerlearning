@@ -15,6 +15,7 @@ defmodule PeerLearningWeb.AuthController do
     end
   end
 
+
   def send_mail(conn, _params) do
     PeerLearningEvents.email_service_deliver_email_confirmation(%{
       "type" => "deliver_email_verification",

@@ -354,6 +354,11 @@ end
     UserCourseOutline.list(params |> Map.put(:user_id, user.id))
   end
 
+  def list_user_course_outlines(params) do
+
+    UserCourseOutline.list(params)
+  end
+
   def list_user_course_outline(user, course_subscription_id, user_course_outline_id) do
     with {:ok, %CourseSubscription{} = course_subscription} <-
            CourseSubscription.get_course_subscription(user.id, course_subscription_id),

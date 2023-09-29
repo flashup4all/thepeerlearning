@@ -4,7 +4,7 @@ defmodule PeerLearningWeb.UserController do
   alias PeerLearning.{Accounts, Auth, Repo}
 
   alias PeerLearning.Accounts.User
-  alias PeerLearningWeb.Validators.{RegisterUser, EmailValidator, ResetPassword}
+  alias PeerLearningWeb.Validators.{RegisterUser, EmailValidator, ResetPassword, CreateUser}
   alias PeerLearningWeb.Auth.Guardian
 
   action_fallback PeerLearningWeb.FallbackController
@@ -63,8 +63,12 @@ defmodule PeerLearningWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, :show, user: user)
+    # user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+    IO.inspect id
+    with {:ok, user} <- Accounts.get_user(id) do
+      render(conn, :show, user: user)
+
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
@@ -93,6 +97,21 @@ defmodule PeerLearningWeb.UserController do
           %{
             # token: user_token.token
           },
+        status: "success"
+      })
+    end
+  end
+
+  def change_password(conn, params) do
+    user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+    with {:ok, validated_params} <- CreateUser.change_password_cast_and_validate(params),
+    {:ok, %{user: user, token: token}} <- Auth.change_password(user, validated_params) do
+      conn
+      |> put_status(200)
+      |> json(%{
+        data: %{
+          token: token
+        },
         status: "success"
       })
     end

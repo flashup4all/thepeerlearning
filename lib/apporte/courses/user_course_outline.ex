@@ -91,6 +91,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
       |> filter(:course_subscription_id, :eq, params.course_subscription_id)
       |> filter(:user_id, :eq, params.user_id)
       |> filter(:range, :date, params.from_date, params.to_date)
+      |> order_by([course_outline], asc: course_outline.date)
       |> preload()
 
     Repo.paginate(query, page: params.page, page_size: params.limit)

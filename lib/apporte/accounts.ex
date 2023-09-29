@@ -28,6 +28,12 @@ defmodule PeerLearning.Accounts do
     end)
   end
 
+  def get_user(id) do
+    with {:ok, user} <- User.get_user(id) do
+      {:ok, Repo.preload(user, [:children, :user_profile])}
+    end
+  end
+
   def list_children(%FilterChildren{page: _page, page_size: _page_size} = params) do
     Children.get_children(Map.from_struct(params))
   end
