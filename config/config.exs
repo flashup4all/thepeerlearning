@@ -130,7 +130,7 @@ config :peer_learning, PeerLearning.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: mailgun_api_key,
   domain: mailgun_domain,
-  base_uri: "https://api.eu.mailgun.net/v3",
+  base_uri: "https://api.mailgun.net/v3",
   hackney_opts: [
     recv_timeout: :timer.minutes(1)
   ]

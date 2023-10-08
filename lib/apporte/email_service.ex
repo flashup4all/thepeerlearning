@@ -9,7 +9,24 @@ defmodule PeerLearning.EmailService do
     |> from("hello@thepeerlearning.com")
   end
 
+  def deliver_test_mail(payload) do
+    IO.inspect payload
+    web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
+
+    to_email = payload["email"]
+
+    base_email()
+    |> to(to_email)
+    |> subject("[The Peer Learning] Account Verification")
+    |> template("email-verification")
+    |> IO.inspect
+    |> Mailer.deliver_now() |> IO.inspect
+
+    :ok
+  end
+
   def deliver_email_verification(payload) do
+    IO.inspect payload
     web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
 
     to_email = payload["email"]
@@ -26,7 +43,7 @@ defmodule PeerLearning.EmailService do
       "password_reset_link" =>
         "#{web_endpoint}/account/verification/#{hashed_token}/#{Base.url_encode64(to_email, padding: false)}"
     })
-    |> Mailer.deliver_now()
+    |> Mailer.deliver_now() |> IO.inspect
 
     :ok
   end

@@ -17,11 +17,13 @@ defmodule PeerLearningWeb.AuthController do
 
 
   def send_mail(conn, _params) do
-    PeerLearningEvents.email_service_deliver_email_confirmation(%{
-      "type" => "deliver_email_verification",
-      "payload" => %{
-        "email" => "flashup4all@gmail.com"
-      }
-    })
+
+    PeerLearning.EmailService.deliver_test_mail(%{"email" => "flashup4all@gmail.com"})
+    # PeerLearningEvents.email_service_deliver_email_confirmation(%{
+    #   "type" => "deliver_email_verification",
+    #   "payload" => %{
+    #     "email" => "flashup4all@gmail.com"
+    #   }
+    # })
   end
 end

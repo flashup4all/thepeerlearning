@@ -188,6 +188,8 @@ defmodule PeerLearning.Courses do
               "start_date" => start_date
             } = decoded_draft} <- Jason.decode(draft.content),
            {:ok, %User{} = user} <- User.get_user(user_id),
+           {:ok, %User{} = user} <-
+            User.update_user(user, %{registration_step: :completed}),
            {:ok, %User{} = instructor} <- User.default_instructor(),
            {:ok, %Course{} = course} <- Course.get_course(course_id),
            {:ok, %Children{} = child} <- Children.get_user_child(user.id, children_id),

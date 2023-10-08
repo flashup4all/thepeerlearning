@@ -3,6 +3,7 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
   alias PeerLearningWeb.CourseOutlineJSON
   alias PeerLearningWeb.ChildrenJSON
   alias PeerLearningWeb.CourseSubscriptionJSON
+  alias PeerLearningWeb.UserJSON
   
 
   @doc """
@@ -67,6 +68,10 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
     ),
     course_subscription: if(Ecto.assoc_loaded?(user_course_outline.course_subscription),
       do: CourseSubscriptionJSON.data(user_course_outline.course_subscription),
+      else: nil
+    ),
+    parent: if(Ecto.assoc_loaded?(user_course_outline.user),
+      do: UserJSON.data(user_course_outline.user),
       else: nil
     ),
     }

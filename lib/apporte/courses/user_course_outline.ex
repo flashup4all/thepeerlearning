@@ -80,7 +80,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
 
   def preload(query) do
     query
-    |> preload([user_course_outline], [:course_outline, :children, [course_subscription: :instructor]])
+    |> preload([user_course_outline], [:course_outline, :children, [course_subscription: :instructor], user: [:user_profile], ])
   end
 
   def list(params) do
@@ -94,7 +94,7 @@ defmodule PeerLearning.Courses.UserCourseOutline do
       |> order_by([course_outline], asc: course_outline.date)
       |> preload()
 
-    Repo.paginate(query, page: params.page, page_size: params.limit) #|>IO.inspect
+    Repo.paginate(query, page: params.page, page_size: params.limit)
   end
 
   def get(user_course_outline_id) do
