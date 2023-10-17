@@ -194,6 +194,7 @@ defmodule PeerLearning.Courses do
            {:ok, %Course{} = course} <- Course.get_course(course_id),
            {:ok, %Children{} = child} <- Children.get_user_child(user.id, children_id),
            {:ok, %Transaction{} = transaction} <- Transaction.get_transaction(transaction_id),
+
            {:ok, %CourseSubscription{} = course_subscription} <-
              CourseSubscription.create(user, child, course, transaction, instructor, %{
                timezone: timezone,
@@ -201,11 +202,12 @@ defmodule PeerLearning.Courses do
              }),
            [%CourseOutline{} | _] = course_outlines <-
              CourseOutline.course_outlines(course_subscription.course_id),
+            {:ok, start_date} <-Date.from_iso8601(start_date),
            :ok <-
              schedule_manager(
                weeks,
                Enum.chunk_every(course_outlines, 2),
-               DateTime.utc_now(),
+               start_date,
                user,
                child,
                course,
