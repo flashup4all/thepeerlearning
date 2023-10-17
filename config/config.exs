@@ -96,7 +96,7 @@ config :peer_learning,
   http_client: PeerLearning.HTTPClient,
   default_pagination: default_pagination,
   email_provider: default_email_provider,
-  web_endpoint: "http://localhost:3000"
+  web_endpoint: "https://app.thepeerlearning.com"
 
 sentry_dsn =
   System.get_env("SENTRY_DSN") ||
