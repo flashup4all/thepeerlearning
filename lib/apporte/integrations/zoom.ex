@@ -28,7 +28,7 @@ defmodule PeerLearning.Integrations.Zoom do
   end
 
   def create_meeting(payload, token) do
-    (@base_url <> "/users/me/meetings")
+    @base_url <> "/users/me/meetings"
     {:ok, response} = create_oauth_token()
 
     case @http_client.post(

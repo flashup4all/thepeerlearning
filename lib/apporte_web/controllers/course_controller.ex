@@ -52,11 +52,12 @@ defmodule PeerLearningWeb.CourseController do
   end
 
   def seeder(conn, _params) do
-    Courses.seed()
-      conn
-      |> put_status(200)
-      |> json(%{
-        status: "ok"
-      })
+    PeerLearning.DefaultSeeder.seed()
+
+    conn
+    |> put_status(200)
+    |> json(%{
+      status: "ok"
+    })
   end
 end

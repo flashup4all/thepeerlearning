@@ -9,7 +9,8 @@ defmodule PeerLearningEvents.EmailServiceJob do
     "deliver_email_verification",
     "deliver_updated_password_mail",
     "deliver_forgot_password_url",
-    "deliver_subscription_reciept_mail"
+    "deliver_subscription_reciept_mail",
+    "deliver_welcome_mail"
   ]
 
   @impl Oban.Worker
@@ -42,6 +43,12 @@ defmodule PeerLearningEvents.EmailServiceJob do
     |> Oban.insert()
   end
 
+  def deliver_welcome_mail(payload) do
+    payload
+    |> new(priority: 2)
+    |> Oban.insert()
+  end
+
   defp do_perform(:deliver_email_verification, user) do
     :ok = Logger.info("begin processing deliver_email_verification job")
     _ = EmailService.deliver_email_verification(user)
@@ -60,5 +67,10 @@ defmodule PeerLearningEvents.EmailServiceJob do
   defp do_perform(:deliver_subscription_reciept_mail, payload) do
     :ok = Logger.info("begin processing deliver subscription reciept job")
     _ = EmailService.deliver_subscription_reciept_mail(payload)
+  end
+
+  defp do_perform(:deliver_welcome_mail, payload) do
+    :ok = Logger.info("begin processing deliver_welcome_mail job")
+    _ = EmailService.deliver_welcome_mail(payload)
   end
 end

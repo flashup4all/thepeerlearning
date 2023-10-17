@@ -4,7 +4,6 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
   alias PeerLearningWeb.ChildrenJSON
   alias PeerLearningWeb.CourseSubscriptionJSON
   alias PeerLearningWeb.UserJSON
-  
 
   @doc """
   Renders a list of courses.
@@ -57,23 +56,26 @@ defmodule PeerLearningWeb.UserCourseOutlineJSON do
       course_subscription_id: user_course_outline.course_subscription_id,
       inserted_at: user_course_outline.inserted_at,
       updated_at: user_course_outline.updated_at,
-      course_outline: if(Ecto.assoc_loaded?(user_course_outline.course_outline),
-      do: CourseOutlineJSON.data(user_course_outline.course_outline),
-      else: nil
-    ),
-      
-    children: if(Ecto.assoc_loaded?(user_course_outline.children),
-      do: ChildrenJSON.data(user_course_outline.children),
-      else: nil
-    ),
-    course_subscription: if(Ecto.assoc_loaded?(user_course_outline.course_subscription),
-      do: CourseSubscriptionJSON.data(user_course_outline.course_subscription),
-      else: nil
-    ),
-    parent: if(Ecto.assoc_loaded?(user_course_outline.user),
-      do: UserJSON.data(user_course_outline.user),
-      else: nil
-    ),
+      course_outline:
+        if(Ecto.assoc_loaded?(user_course_outline.course_outline),
+          do: CourseOutlineJSON.data(user_course_outline.course_outline),
+          else: nil
+        ),
+      children:
+        if(Ecto.assoc_loaded?(user_course_outline.children),
+          do: ChildrenJSON.data(user_course_outline.children),
+          else: nil
+        ),
+      course_subscription:
+        if(Ecto.assoc_loaded?(user_course_outline.course_subscription),
+          do: CourseSubscriptionJSON.data(user_course_outline.course_subscription),
+          else: nil
+        ),
+      parent:
+        if(Ecto.assoc_loaded?(user_course_outline.user),
+          do: UserJSON.data(user_course_outline.user),
+          else: nil
+        )
     }
   end
 end

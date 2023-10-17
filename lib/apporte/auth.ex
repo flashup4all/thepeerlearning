@@ -202,13 +202,12 @@ defmodule PeerLearning.Auth do
   defp split_fullname(fullname), do: String.split(fullname, " ")
 
   def change_password(%User{} = user, params) do
-
     with {true, :verify_pass} <- {User.verify_password(user, params.old_password), :verify_pass},
          {:ok, user} <- User.update_user_password(user, %{password: params.new_password}),
          {:ok, user_profile} <- UserProfile.get_user_profile_by_user_id(user.id),
          {:ok, token, _claims} <- Guardian.encode_and_sign(user, token_type: "auth") do
-
       [first_name | last_name] = split_fullname(user_profile.fullname)
+
       PeerLearningEvents.email_service_deliver_updated_password_mail(%{
         "type" => "deliver_updated_password_mail",
         "payload" => %{
@@ -226,6 +225,7 @@ defmodule PeerLearning.Auth do
       {false, _} ->
         # Logger.warn("App.Auth - User with email not found")
         {:error, :custom, :bad_request, "Error", "Old password do not match"}
+
       {:error, :not_found} ->
         # Logger.warn("App.Auth - User with email not found")
         {:error, :custom, :bad_request, "Error", "Email/Passwords do not match"}

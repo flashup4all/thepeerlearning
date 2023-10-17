@@ -66,7 +66,6 @@ defmodule PeerLearningWeb.UserController do
     # user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
     with {:ok, user} <- Accounts.get_user(id) do
       render(conn, :show, user: user)
-
     end
   end
 
@@ -103,8 +102,9 @@ defmodule PeerLearningWeb.UserController do
 
   def change_password(conn, params) do
     user = PeerLearningWeb.Auth.Guardian.Plug.current_resource(conn, [])
+
     with {:ok, validated_params} <- CreateUser.change_password_cast_and_validate(params),
-    {:ok, %{user: user, token: token}} <- Auth.change_password(user, validated_params) do
+         {:ok, %{user: user, token: token}} <- Auth.change_password(user, validated_params) do
       conn
       |> put_status(200)
       |> json(%{

@@ -50,27 +50,41 @@ defmodule PeerLearningWeb.CourseSubscriptionJSON do
       children_id: course_subscription.children_id,
       inserted_at: course_subscription.inserted_at,
       updated_at: course_subscription.updated_at,
-      course: if(Ecto.assoc_loaded?(course_subscription.course),
-      do: CourseJSON.data(course_subscription.course),
-      else: nil
-    ),
-      chilren:  if(Ecto.assoc_loaded?(course_subscription.children),
-      do: ChildrenJSON.data(course_subscription.children),
-      else: nil
-    ),
+      course:
+        if(Ecto.assoc_loaded?(course_subscription.course),
+          do: CourseJSON.data(course_subscription.course),
+          else: nil
+        ),
+      chilren:
+        if(Ecto.assoc_loaded?(course_subscription.children),
+          do: ChildrenJSON.data(course_subscription.children),
+          else: nil
+        ),
       instructor:
         if(Ecto.assoc_loaded?(course_subscription.instructor),
           do: UserJSON.data(course_subscription.instructor),
           else: nil
         ),
       user_course_outlines:
-      if(Ecto.assoc_loaded?(course_subscription.user_course_outlines),
-          do: UserCourseOutlineJSON.index_assoc(%{
-            user_course_outlines: course_subscription.user_course_outlines
-          }),
+        if(Ecto.assoc_loaded?(course_subscription.user_course_outlines),
+          do:
+            UserCourseOutlineJSON.index_assoc(%{
+              user_course_outlines: course_subscription.user_course_outlines
+            }),
           else: nil
         ),
-        
+        next_class:
+        if(Map.has_key?(course_subscription, :next_class) && Ecto.assoc_loaded?(course_subscription.next_class),
+          do:
+            UserCourseOutlineJSON.data(course_subscription.next_class),
+          else: nil
+        ),
+        last_class:
+        if(Map.has_key?(course_subscription, :last_class) && Ecto.assoc_loaded?(course_subscription.last_class),
+          do:
+            UserCourseOutlineJSON.data(course_subscription.last_class),
+          else: nil
+        )
     }
   end
 end

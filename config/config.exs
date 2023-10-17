@@ -148,12 +148,11 @@ stripe_secret =
     environment variable STRIPE_SECRET is missing.
     """
 
-    zoom_account_id =
+zoom_account_id =
   System.get_env("ZOOM_ACCOUNT_ID") ||
     raise """
     environment variable ZOOM_ACCOUNT_ID is missing.
     """
-    
 
 config :peer_learning, PeerLearning.Integrations.Stripe,
   api_secret_key: stripe_secret,

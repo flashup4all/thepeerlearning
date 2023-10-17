@@ -10,7 +10,6 @@ defmodule PeerLearning.EmailService do
   end
 
   def deliver_test_mail(payload) do
-    IO.inspect payload
     web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
 
     to_email = payload["email"]
@@ -19,14 +18,12 @@ defmodule PeerLearning.EmailService do
     |> to(to_email)
     |> subject("[The Peer Learning] Account Verification")
     |> template("email-verification")
-    |> IO.inspect
-    |> Mailer.deliver_now() |> IO.inspect
+    |> Mailer.deliver_now()
 
     :ok
   end
 
   def deliver_email_verification(payload) do
-    IO.inspect payload
     web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
 
     to_email = payload["email"]
@@ -43,26 +40,25 @@ defmodule PeerLearning.EmailService do
       "password_reset_link" =>
         "#{web_endpoint}/account/verification/#{hashed_token}/#{Base.url_encode64(to_email, padding: false)}"
     })
-    |> Mailer.deliver_now() |> IO.inspect
+    |> Mailer.deliver_now()
 
     :ok
   end
 
   def deliver_welcome_mail(payload) do
-    web_endpoint = Application.fetch_env!(:peer_learning, :web_endpoint)
-
     to_email = payload["email"]
-    hashed_token = payload["hashed_token"]
     first_name = payload["first_name"]
-    last_name = payload["last_name"]
+    start_date = payload["start_date"]
+    start_time = payload["start_time"]
 
     base_email()
     |> to(to_email)
     |> subject("[The Peer Learning] Welcome!")
-    |> template("email-verification")
+    |> template("welcome-mail")
     |> substitute_variables(%{
       "first_name" => first_name,
-      "password_reset_link" => "#{web_endpoint}/login"
+      "start_date" => start_date,
+      "start_time" => start_time
     })
     |> Mailer.deliver_now()
 

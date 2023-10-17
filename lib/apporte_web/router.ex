@@ -45,7 +45,7 @@ defmodule PeerLearningWeb.Router do
       post "/login", AuthController, :login
       post "/send_mail", AuthController, :send_mail
       post "/seeder", CourseController, :seeder
-      
+
       # resources "/users", UserController, except: [:new, :edit]
       scope "/" do
         pipe_through :auth
@@ -63,6 +63,7 @@ defmodule PeerLearningWeb.Router do
           get "/courses-subscriptions/:course_subscription_id",
               CourseSubscriptionController,
               :show
+
           get "/:id", UserController, :show
 
           get ":user_id/transactions/:transaction_id/setup-user-course",
@@ -76,8 +77,11 @@ defmodule PeerLearningWeb.Router do
           get "/courses-subscriptions/:course_subscription_id/course-outlines/:user_course_outline_id",
               UserCourseOutlineController,
               :show
-        end
 
+          patch "/courses-subscriptions/course-outlines/:user_course_outline_id/instructor/change-status",
+                UserCourseOutlineController,
+                :update_instructor_status
+        end
 
         scope "/admin" do
           get "/courses-subscriptions/course-outlines",
@@ -88,6 +92,7 @@ defmodule PeerLearningWeb.Router do
               UserCourseOutlineController,
               :show
         end
+
         scope "/courses" do
           resources "/", CourseController
           resources "/:course_id/outlines", CourseOutlineController

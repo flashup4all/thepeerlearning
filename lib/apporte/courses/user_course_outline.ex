@@ -80,7 +80,12 @@ defmodule PeerLearning.Courses.UserCourseOutline do
 
   def preload(query) do
     query
-    |> preload([user_course_outline], [:course_outline, :children, [course_subscription: :instructor], user: [:user_profile], ])
+    |> preload([user_course_outline], [
+      :course_outline,
+      :children,
+      [course_subscription: :instructor],
+      user: [:user_profile]
+    ])
   end
 
   def list(params) do
@@ -118,5 +123,39 @@ defmodule PeerLearning.Courses.UserCourseOutline do
     |> validate_required(@required_fields)
     |> unique_constraint(:unique_name, message: "unique_name has already been added.")
     |> Repo.update()
+  end
+
+  def get_next_class(course_subscription_id) do
+    query =
+      __MODULE__
+      |> where([user_course_outline], user_course_outline.course_subscription_id == ^course_subscription_id)
+      |> where([user_course_outline], user_course_outline.status == :pending)
+      |> order_by([user_course_outline], asc: user_course_outline.date)
+      |> limit(1)
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      user_course_outline ->
+        {:ok, user_course_outline}
+    end
+  end
+
+  def get_last_class(course_subscription_id) do
+    query =
+      __MODULE__
+      |> where([user_course_outline], user_course_outline.course_subscription_id == ^course_subscription_id)
+      |> where([user_course_outline], user_course_outline.status == :pending)
+      |> order_by([user_course_outline], desc: user_course_outline.date)
+      |> limit(1)
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      user_course_outline ->
+        {:ok, user_course_outline}
+    end
   end
 end
