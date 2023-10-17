@@ -22,9 +22,9 @@ defmodule PeerLearning.Courses.UserCourseOutline do
     field :metadata, :map
     field :date, :utc_datetime
     field :time, :string
-    field :status, Ecto.Enum, values: [:completed, :pending, :ongoing], default: :pending
-    field :instructor_status, Ecto.Enum, values: [:completed, :pending, :ongoing]
-    field :child_status, Ecto.Enum, values: [:completed, :pending, :ongoing]
+    field :status, Ecto.Enum, values: [:completed, :pending, :ongoing, :missed], default: :pending
+    field :instructor_status, Ecto.Enum, values: [:completed, :pending, :ongoing, :missed]
+    field :child_status, Ecto.Enum, values: [:completed, :pending, :ongoing, :missed]
 
     belongs_to(:user, User)
     belongs_to(:children, Children)

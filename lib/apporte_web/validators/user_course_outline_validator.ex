@@ -17,8 +17,8 @@ defmodule PeerLearningWeb.Validators.UserCourseOutline do
     field :user_id, Ecto.UUID
     field :children_id, Ecto.UUID
     field :instructor_feedback, :string
-    field :status, Ecto.Enum, values: [:completed, :pending, :ongoing], default: :pending
-    field :instructor_status, Ecto.Enum, values: [:completed, :pending, :ongoing]
+    field :status, Ecto.Enum, values: [:completed, :pending, :ongoing, :missed], default: :pending
+    field :instructor_status, Ecto.Enum, values: [:completed, :pending, :ongoing, :missed]
     field :notes, :string
     field :assignment, :string
     field :child_feedback, :string
