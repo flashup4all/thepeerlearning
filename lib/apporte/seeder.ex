@@ -22,7 +22,7 @@ defmodule PeerLearning.DefaultSeeder do
           description:
             "Our web development curriculum pathway is designed to teach kids the skills they need to become a successful web developer. The pathway is divided into four courses: kids will learn everything they need to know to create beautiful responsive websites from scratch.",
           # in cents
-          amount: 120_000,
+          amount: 120,
           default_currency: "USD",
           age_range: "10-13",
           level: "2",
@@ -97,7 +97,7 @@ defmodule PeerLearning.DefaultSeeder do
           description:
             "This is where it all begins! This pathway is designed to help students learn the fundamentals of coding and computational thinking in a fun and engaging way while designing their own games and animations. The pathway is divided into three levels, each of which builds on the skills learned in the previous level.",
           # in cents
-          amount: 120_000,
+          amount: 120,
           default_currency: "USD",
           age_range: "7-9",
           level: "1",
