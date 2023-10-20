@@ -2,7 +2,7 @@ defmodule PeerLearning.Courses.CourseSubscription do
   @moduledoc false
 
   alias PeerLearning.Repo
-  alias PeerLearning.Courses.Course
+  alias PeerLearning.Courses.{Course, UserCourseOutline}
   alias PeerLearning.Accounts.{User, Children}
   alias PeerLearning.Billing.Transaction
 
@@ -95,12 +95,13 @@ defmodule PeerLearning.Courses.CourseSubscription do
   end
 
   def preload(query) do
+    user_course_outline_query = from(user_course_outline in UserCourseOutline, order_by: user_course_outline.date, preload: [:course_outline])
     query
     |> preload([course_subscription], [
       :course,
       :children,
       instructor: [:user_profile],
-      user_course_outlines: [:course_outline]
+      user_course_outlines: ^user_course_outline_query
     ])
   end
 
@@ -136,9 +137,8 @@ defmodule PeerLearning.Courses.CourseSubscription do
     case Repo.one(query) do
       nil ->
         {:error, :not_found}
-
-      course ->
-        {:ok, course}
+      course_subscription ->
+        {:ok, course_subscription}
     end
   end
 
